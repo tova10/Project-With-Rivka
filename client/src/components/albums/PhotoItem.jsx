@@ -1,7 +1,63 @@
+import { useState } from "react";
+import useForm from "../../hooks/useForm";
 import "./PhotoItem.css";
 
-function PhotoItem() {
-  return <div>PhotoItem</div>;
+// photo    = התמונה להצגה
+// onUpdate = עדכון (מקבל id ושינויים)
+// onDelete = מחיקה (מקבל id)
+function PhotoItem({ photo, onUpdate, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const { values, handleChange, reset } = useForm({
+    title: photo.title,
+    url: photo.url,
+  });
+
+  // תמונה חלופית, אם הקישור המקורי לא עובד
+  const fallbackUrl = `https://picsum.photos/seed/${photo.id}/150`;
+
+  function handleImageError(e) {
+    if (e.target.src !== fallbackUrl) {
+      e.target.src = fallbackUrl;
+    }
+  }
+
+  function handleSave() {
+    if (!values.title.trim() || !values.url.trim()) return;
+    onUpdate(photo.id, {
+      title: values.title,
+      url: values.url,
+      thumbnailUrl: values.url,
+    });
+    setIsEditing(false);
+  }
+
+  function handleCancel() {
+    reset();
+    setIsEditing(false);
+  }
+
+  return (
+    <div className="photo-item">
+      <img src={photo.thumbnailUrl} alt={photo.title} onError={handleImageError} />
+
+      {isEditing ? (
+        <>
+          <input name="title" value={values.title} onChange={handleChange} />
+          <input name="url" value={values.url} onChange={handleChange} />
+          <button onClick={handleSave}>Save</button>
+          <button onClick={handleCancel}>Cancel</button>
+        </>
+      ) : (
+        <>
+          <p>
+            #{photo.id} {photo.title}
+          </p>
+          <button onClick={() => setIsEditing(true)}>Edit</button>
+          <button onClick={() => onDelete(photo.id)}>Delete</button>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default PhotoItem;

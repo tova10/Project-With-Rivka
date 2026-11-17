@@ -1,1 +1,23 @@
-/* PhotoItem styles */
+.photo-item {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  width: 160px;
+}
+
+.photo-item img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-item p {
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+.photo-item input {
+  width: 100%;
+  margin-bottom: 4px;
+}

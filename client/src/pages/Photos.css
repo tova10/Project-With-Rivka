@@ -1,1 +1,6 @@
-/* Photos styles */
+.photos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
