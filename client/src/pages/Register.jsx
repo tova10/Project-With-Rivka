@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getData } from "../api/api";
 import useForm from "../hooks/useForm";
-import "./Register.css";
+import "../css/Register.css";
 
 function Register() {
   const { values, handleChange } = useForm({

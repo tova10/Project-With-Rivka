@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import "./Info.css";
+import "../css/Info.css";
 
 // רשימת השדות להצגה: כותרת, ואיך מוציאים את הערך מהמשתמש
 const INFO_FIELDS = [

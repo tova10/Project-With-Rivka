@@ -3,7 +3,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { addData } from "../api/api";
 import { UserContext } from "../context/UserContext";
 import useForm from "../hooks/useForm";
-import "./RegisterDetails.css";
+import "../css/RegisterDetails.css";
 
 // רשימת השדות בטופס: כדי לא לכתוב 6 שדות input אחד אחד
 const FIELDS = [

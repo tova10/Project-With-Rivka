@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import "./Home.css";
+import "../css/Home.css";
 
 function Home() {
   const { user, logout } = useContext(UserContext);

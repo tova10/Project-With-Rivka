@@ -1,15 +1,21 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { getData } from "../api/api";
 import { UserContext } from "../context/UserContext";
 import useForm from "../hooks/useForm";
-import "./Login.css";
+import "../css/Login.css";
 
 function Login() {
   const { values, handleChange } = useForm({ username: "", password: "" });
   const [error, setError] = useState("");
-  const { login } = useContext(UserContext);
+  const { user, login } = useContext(UserContext);
   const navigate = useNavigate();
+
+  // כבר יש משתמש שמור (ב-LS): עוברים ישר לעמוד היישום שלו
+  // (הבדיקה נמצאת אחרי כל ה-hooks, כי אסור להפעיל hooks אחרי return)
+  if (user) {
+    return <Navigate to={`/${user.username}`} replace />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();

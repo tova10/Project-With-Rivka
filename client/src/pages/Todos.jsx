@@ -5,7 +5,7 @@ import { filterItems, sortItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
 import TodoItem from "../components/todos/TodoItem";
-import "./Todos.css";
+import "../css/Todos.css";
 
 // השדות בטופס ההוספה
 const ADD_FIELDS = [{ name: "title", placeholder: "New todo..." }];

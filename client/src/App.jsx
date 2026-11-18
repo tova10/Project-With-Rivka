@@ -10,17 +10,26 @@ import Posts from "./pages/Posts";
 import Albums from "./pages/Albums";
 import Photos from "./pages/Photos";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
+      {/* דף הכניסה בודק בעצמו אם כבר יש משתמש מחובר, ואם כן מעביר לעמוד היישום */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/register/details" element={<RegisterDetails />} />
 
-      <Route path="/:username" element={<Home />}>
+      <Route
+        path="/:username"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      >
         <Route path="info" element={<Info />} />
         <Route path="todos" element={<Todos />} />
         <Route path="posts" element={<Posts />} />

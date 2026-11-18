@@ -5,7 +5,7 @@ import { filterItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
 import PostItem from "../components/posts/PostItem";
-import "./Posts.css";
+import "../css/Posts.css";
 
 // השדות בטופס ההוספה: לפוסט יש כותרת ותוכן
 const ADD_FIELDS = [

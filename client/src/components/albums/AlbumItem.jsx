@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./AlbumItem.css";
+import "../../css/AlbumItem.css";
 
 // album    = האלבום להצגה
 // onDelete = מחיקה (מקבל id)

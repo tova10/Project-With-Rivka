@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { getData, addData, updateData, deleteData } from "../api/api";
 
-// בונה את הכתובת לשרת. אם יש pageSize, מוסיפים מספר עמוד וכמות
-function buildPath(resource, query, pageSize, page) {
+// בונה את הכתובת לשרת. אם יש pageSize, מוסיפים מאיזה מקום להתחיל וכמה להביא
+// start = כמה פריטים לדלג (0 = מההתחלה)
+function buildPath(resource, query, pageSize, start) {
   let path = `${resource}${query}`;
 
   if (pageSize > 0) {
     const separator = query ? "&" : "?";
-    path += `${separator}_page=${page}&_limit=${pageSize}`;
+    path += `${separator}_start=${start}&_limit=${pageSize}`;
   }
 
   return path;
@@ -21,41 +22,50 @@ function useResource(resource, query = "", pageSize = 0) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
-  // להביא: העמוד הראשון (או הכול), כשהדף נפתח או כשהסינון משתנה
+  // כמה פריטים כבר עברנו ברשימה שבשרת (מאיפה להמשיך בפעם הבאה)
+  const [offset, setOffset] = useState(0);
+
+  // להביא: הקבוצה הראשונה (או הכול), כשהדף נפתח או כשהסינון משתנה
   useEffect(() => {
+    // אם הסינון השתנה לפני שהתשובה חזרה, מתעלמים מהתשובה הישנה
+    let ignore = false;
+
     async function load() {
       setLoading(true);
       setError("");
       try {
-        const data = await getData(buildPath(resource, query, pageSize, 1));
+        const data = await getData(buildPath(resource, query, pageSize, 0));
+        if (ignore) return;
         setItems(data);
-        setPage(1);
+        setOffset(data.length);
         setHasMore(pageSize > 0 && data.length === pageSize);
       } catch (err) {
-        setError(err.message);
+        if (!ignore) setError(err.message);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     }
 
     load();
+
+    return () => {
+      ignore = true;
+    };
   }, [resource, query, pageSize]);
 
-  // להביא עוד: העמוד הבא, ולהוסיף לסוף הרשימה
+  // להביא עוד: ממשיכים מהמקום שעצרנו, ומוסיפים לסוף הרשימה
   async function loadMore() {
     try {
-      const nextPage = page + 1;
-      const data = await getData(buildPath(resource, query, pageSize, nextPage));
+      const data = await getData(buildPath(resource, query, pageSize, offset));
 
       // מוסיפים רק פריטים שעוד לא קיימים ברשימה
       setItems((prev) => [
         ...prev,
         ...data.filter((newItem) => !prev.some((item) => item.id === newItem.id)),
       ]);
-      setPage(nextPage);
+      setOffset((prev) => prev + data.length);
       setHasMore(data.length === pageSize);
     } catch (err) {
       setError(err.message);
@@ -87,6 +97,12 @@ function useResource(resource, query = "", pageSize = 0) {
     try {
       await deleteData(resource, id);
       setItems((prev) => prev.filter((item) => item.id !== id));
+
+      // הרשימה בשרת התקצרה באחד, אז גם המקום שממנו ממשיכים זז אחורה
+      // (בלי זה, "טען עוד" היה מדלג על פריט אחד)
+      if (pageSize > 0) {
+        setOffset((prev) => Math.max(prev - 1, 0));
+      }
     } catch (err) {
       setError(err.message);
     }

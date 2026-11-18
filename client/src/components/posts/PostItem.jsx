@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useForm from "../../hooks/useForm";
-import "./PostItem.css";
+import Comments from "./Comments";
+import "../../css/PostItem.css";
 
 // post       = הפוסט להצגה
 // isSelected = האם הפוסט פתוח
@@ -10,10 +11,23 @@ import "./PostItem.css";
 // onDelete   = מחיקה (מקבל id)
 function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const { values, handleChange, reset } = useForm({
     title: post.title,
     body: post.body,
   });
+
+  // לחיצה על כפתור הכותרת: פותחת את הפוסט (רק אם הוא סגור)
+  function handleOpen() {
+    if (!isSelected) {
+      onSelect(post.id);
+    }
+  }
+
+  // לחיצה על X: סוגרת את הפוסט
+  function handleClose() {
+    onSelect(post.id);
+  }
 
   function handleSave() {
     if (!values.title.trim() || !values.body.trim()) return;
@@ -28,12 +42,17 @@ function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
 
   return (
     <li className={isSelected ? "post-item selected" : "post-item"}>
-      <div>
-        <span>#{post.id} </span>
-        <span>{post.title} </span>
-        <button onClick={() => onSelect(post.id)}>
-          {isSelected ? "Close" : "Open"}
+      <div className="post-header">
+        {/* כפתור לבחירת הפוסט (לפי הדרישות) */}
+        <button className="post-title-button" onClick={handleOpen}>
+          #{post.id} {post.title}
         </button>
+
+        {isSelected && (
+          <button className="close-button" onClick={handleClose}>
+            ✕
+          </button>
+        )}
       </div>
 
       {isSelected && (
@@ -54,8 +73,13 @@ function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
                   <button onClick={() => onDelete(post.id)}>Delete</button>
                 </>
               )}
+              <button onClick={() => setShowComments(!showComments)}>
+                {showComments ? "Hide comments" : "Show comments"}
+              </button>
             </>
           )}
+
+          {showComments && <Comments postId={post.id} />}
         </div>
       )}
     </li>

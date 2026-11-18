@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useForm from "../../hooks/useForm";
-import "./PhotoItem.css";
+import "../../css/PhotoItem.css";
 
 // photo    = התמונה להצגה
 // onUpdate = עדכון (מקבל id ושינויים)

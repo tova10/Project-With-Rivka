@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./TodoItem.css";
+import "../../css/TodoItem.css";
 
 // todo     = המשימה להצגה
 // onUpdate = עדכון (מקבל id ושינויים)

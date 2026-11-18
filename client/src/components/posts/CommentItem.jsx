@@ -35,7 +35,8 @@ function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
       ) : (
         <>
           <strong>{comment.name}</strong>
-          <small> by {comment.email}</small>
+          {/* מי כתב: שם משתמש בלבד (לא מייל). תגובה בלי שם משתמש = אנונימית */}
+          <small> by {comment.username || "Anonymous"}</small>
           <p>{comment.body}</p>
           {isOwner && (
             <>

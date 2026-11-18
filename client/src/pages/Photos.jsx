@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { Link, useParams } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 import useResource from "../hooks/useResource";
 import AddForm from "../components/common/AddForm";
 import PhotoItem from "../components/albums/PhotoItem";
-import "./Photos.css";
+import "../css/Photos.css";
 
 // כמה תמונות להביא בכל פעם
 const PAGE_SIZE = 10;
@@ -14,7 +16,15 @@ const ADD_FIELDS = [
 ];
 
 function Photos() {
+  const { user } = useContext(UserContext);
   const { username, albumId } = useParams();
+
+  // בדיקה: האם האלבום הזה שייך למשתמש המחובר?
+  const { items: myAlbum, loading: albumLoading } = useResource(
+    "albums",
+    `?id=${albumId}&userId=${user?.id}`
+  );
+
   const {
     items: photos,
     loading,
@@ -36,13 +46,23 @@ function Photos() {
     });
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading || albumLoading) return <p>Loading...</p>;
+
+  // האלבום לא שייך למשתמש (או לא קיים)
+  if (myAlbum.length === 0) {
+    return (
+      <div>
+        <p>Album not found.</p>
+        <Link to={`/${username}/albums`}>← Back to albums</Link>
+      </div>
+    );
+  }
 
   return (
     <div>
       <Link to={`/${username}/albums`}>← Back to albums</Link>
 
-      <h2>Album #{albumId}</h2>
+      <h2>{myAlbum[0].title}</h2>
 
       {error && <p>Error: {error}</p>}
 

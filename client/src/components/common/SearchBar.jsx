@@ -1,4 +1,4 @@
-import "./SearchBar.css";
+import "../../css/SearchBar.css";
 
 // fields   = על אילו שדות אפשר לחפש: [{ value: "id", label: "ID" }, ...]
 // search   = החיפוש הנוכחי: { field: "title", text: "" }

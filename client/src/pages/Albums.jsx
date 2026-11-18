@@ -5,7 +5,7 @@ import { filterItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
 import AlbumItem from "../components/albums/AlbumItem";
-import "./Albums.css";
+import "../css/Albums.css";
 
 // השדות בטופס ההוספה: לאלבום יש רק כותרת
 const ADD_FIELDS = [{ name: "title", placeholder: "New album title..." }];

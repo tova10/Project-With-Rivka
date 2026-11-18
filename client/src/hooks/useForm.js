@@ -6,8 +6,10 @@ function useForm(initialValues) {
   const [values, setValues] = useState(initialValues);
 
   // מעדכן כל שדה לפי ה-name שלו
+  // בתיבת סימון (checkbox) הערך הוא checked (true/false), בשאר השדות value
   function handleChange(e) {
-    setValues({ ...values, [e.target.name]: e.target.value });
+    const { name, type, value, checked } = e.target;
+    setValues({ ...values, [name]: type === "checkbox" ? checked : value });
   }
 
   // מחזיר את הטופס למצב ההתחלתי
