@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import useResource from "../hooks/useResource";
+import { useUrlState, useUrlSearch } from "../hooks/useUrlState";
 import { filterItems, sortItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
@@ -29,8 +30,9 @@ function Todos() {
   const { items: todos, loading, error, addItem, updateItem, removeItem } =
     useResource("todos", `?userId=${user?.id}`);
 
-  const [search, setSearch] = useState({ field: "title", text: "" });
-  const [sortBy, setSortBy] = useState("id");
+  // החיפוש והמיון נשמרים בכתובת (נשארים אחרי ריענון)
+  const [search, setSearch] = useUrlSearch("title");
+  const [sortBy, setSortBy] = useUrlState("sort", "id");
 
   // מה מוצג: קודם מסננים, אחר כך ממיינים
   const visibleTodos = sortItems(filterItems(todos, search), sortBy);

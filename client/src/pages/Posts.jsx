@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import useResource from "../hooks/useResource";
+import { useUrlState, useUrlSearch } from "../hooks/useUrlState";
 import { filterItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
@@ -22,8 +23,9 @@ const SEARCH_FIELDS = [
 function Posts() {
   const { user } = useContext(UserContext);
 
-  // false = הפוסטים שלי, true = כל הפוסטים
-  const [showAll, setShowAll] = useState(false);
+  // הפוסטים שלי / כל הפוסטים (נשמר בכתובת: ?all=true)
+  const [all, setAll] = useUrlState("all");
+  const showAll = all === "true";
 
   // הסינון שנשלח לשרת: לפי המצב
   const query = showAll ? "" : `?userId=${user?.id}`;
@@ -31,10 +33,11 @@ function Posts() {
   const { items: posts, loading, error, addItem, updateItem, removeItem } =
     useResource("posts", query);
 
-  const [search, setSearch] = useState({ field: "title", text: "" });
+  // החיפוש נשמר בכתובת (נשאר אחרי ריענון)
+  const [search, setSearch] = useUrlSearch("title");
 
-  // איזה פוסט פתוח (null = אף אחד)
-  const [selectedPostId, setSelectedPostId] = useState(null);
+  // איזה פוסט פתוח ("" = אף אחד), נשמר בכתובת: ?post=5
+  const [selected, setSelected] = useUrlState("post");
 
   // מה מוצג: הרשימה אחרי חיפוש
   const visiblePosts = filterItems(posts, search);
@@ -46,14 +49,14 @@ function Posts() {
 
   // לחיצה על פוסט פתוח סוגרת אותו, ועל פוסט אחר פותחת אותו
   function handleSelect(postId) {
-    setSelectedPostId(selectedPostId === postId ? null : postId);
+    setSelected(String(postId) === selected ? "" : String(postId));
   }
 
   // מחיקה: אם הפוסט שנמחק היה פתוח, מנקים את הבחירה
   function handleDelete(postId) {
     removeItem(postId);
-    if (selectedPostId === postId) {
-      setSelectedPostId(null);
+    if (String(postId) === selected) {
+      setSelected("");
     }
   }
 
@@ -63,7 +66,7 @@ function Posts() {
     <div>
       <h2>{showAll ? "All Posts" : "My Posts"}</h2>
 
-      <button onClick={() => setShowAll(!showAll)}>
+      <button onClick={() => setAll(showAll ? "" : "true")}>
         {showAll ? "Show my posts" : "Show all posts"}
       </button>
 
@@ -80,7 +83,7 @@ function Posts() {
           <PostItem
             key={post.id}
             post={post}
-            isSelected={post.id === selectedPostId}
+            isSelected={String(post.id) === selected}
             isOwner={post.userId === user.id}
             onSelect={handleSelect}
             onUpdate={updateItem}

@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import useResource from "../hooks/useResource";
+import { useUrlSearch } from "../hooks/useUrlState";
 import { filterItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
@@ -21,7 +22,8 @@ function Albums() {
   const { items: albums, loading, error, addItem, removeItem } =
     useResource("albums", `?userId=${user?.id}`);
 
-  const [search, setSearch] = useState({ field: "title", text: "" });
+  // החיפוש נשמר בכתובת (נשאר אחרי ריענון)
+  const [search, setSearch] = useUrlSearch("title");
 
   // מה מוצג: הרשימה אחרי חיפוש
   const visibleAlbums = filterItems(albums, search);

@@ -13,8 +13,7 @@ function PhotoItem({ photo, onUpdate, onDelete }) {
   });
 
   // תמונה חלופית, אם הקישור המקורי לא עובד
-  const fallbackUrl = `https://picsum.photos/seed/${photo.id}/150`;
-
+  const fallbackUrl = "https://placehold.co/150x150/eeeeee/999999.png?text=No+image";
   function handleImageError(e) {
     if (e.target.src !== fallbackUrl) {
       e.target.src = fallbackUrl;

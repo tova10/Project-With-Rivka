@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getData, addData, updateData, deleteData } from "../api/api";
+import { getCache, setCache, clearResource } from "../utils/cache";
+
+// מצב התחלתי כשאין מידע
+const EMPTY = { items: [], offset: 0, hasMore: false };
 
 // בונה את הכתובת לשרת. אם יש pageSize, מוסיפים מאיזה מקום להתחיל וכמה להביא
-// start = כמה פריטים לדלג (0 = מההתחלה)
 function buildPath(resource, query, pageSize, start) {
   let path = `${resource}${query}`;
 
@@ -14,33 +17,57 @@ function buildPath(resource, query, pageSize, start) {
   return path;
 }
 
-// Hook גנרי לכל רשימה: מביא, מוסיף, מעדכן ומוחק
+// Hook גנרי לכל רשימה: מביא, מוסיף, מעדכן ומוחק - עם cache
 // resource = שם המגירה ("todos", "posts"...)
 // query    = סינון (למשל "?userId=1")
 // pageSize = כמה פריטים להביא בכל פעם (0 = הכול בבת אחת)
 function useResource(resource, query = "", pageSize = 0) {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // מפתח ייחודי לכל רשימה, למשל: "todos?userId=1|0"
+  const cacheKey = `${resource}${query}|${pageSize}`;
+
+  // data = הפריטים + מאיפה להמשיך + האם יש עוד
+  const [data, setData] = useState(() => getCache(cacheKey) || EMPTY);
+  const [loading, setLoading] = useState(() => !getCache(cacheKey));
   const [error, setError] = useState("");
-  const [hasMore, setHasMore] = useState(false);
 
-  // כמה פריטים כבר עברנו ברשימה שבשרת (מאיפה להמשיך בפעם הבאה)
-  const [offset, setOffset] = useState(0);
+  // עותק עדכני תמיד של data, כדי שפעולות מהירות ברצף לא ידרסו זו את זו
+  const dataRef = useRef(data);
 
-  // להביא: הקבוצה הראשונה (או הכול), כשהדף נפתח או כשהסינון משתנה
+  // שמירת שינוי: גם בתצוגה וגם ב-cache
+  function apply(changes) {
+    const next = { ...dataRef.current, ...changes };
+    dataRef.current = next;
+    setData(next);
+    setCache(cacheKey, next);
+  }
+
+  // טעינה: קודם בודקים ב-cache, ורק אם אין - פונים לשרת
   useEffect(() => {
-    // אם הסינון השתנה לפני שהתשובה חזרה, מתעלמים מהתשובה הישנה
     let ignore = false;
+
+    const cached = getCache(cacheKey);
+    if (cached) {
+      dataRef.current = cached;
+      setData(cached);
+      setError("");
+      setLoading(false);
+      return;
+    }
 
     async function load() {
       setLoading(true);
       setError("");
       try {
-        const data = await getData(buildPath(resource, query, pageSize, 0));
+        const items = await getData(buildPath(resource, query, pageSize, 0));
         if (ignore) return;
-        setItems(data);
-        setOffset(data.length);
-        setHasMore(pageSize > 0 && data.length === pageSize);
+        const next = {
+          items,
+          offset: items.length,
+          hasMore: pageSize > 0 && items.length === pageSize,
+        };
+        dataRef.current = next;
+        setData(next);
+        setCache(cacheKey, next);
       } catch (err) {
         if (!ignore) setError(err.message);
       } finally {
@@ -53,70 +80,80 @@ function useResource(resource, query = "", pageSize = 0) {
     return () => {
       ignore = true;
     };
-  }, [resource, query, pageSize]);
+  }, [cacheKey, resource, query, pageSize]);
 
-  // להביא עוד: ממשיכים מהמקום שעצרנו, ומוסיפים לסוף הרשימה
+  // להביא עוד: ממשיכים מהמקום שעצרנו
   async function loadMore() {
     try {
-      const data = await getData(buildPath(resource, query, pageSize, offset));
-
+      const newItems = await getData(
+        buildPath(resource, query, pageSize, dataRef.current.offset)
+      );
+      const current = dataRef.current;
       // מוסיפים רק פריטים שעוד לא קיימים ברשימה
-      setItems((prev) => [
-        ...prev,
-        ...data.filter((newItem) => !prev.some((item) => item.id === newItem.id)),
-      ]);
-      setOffset((prev) => prev + data.length);
-      setHasMore(data.length === pageSize);
+      const fresh = newItems.filter(
+        (newItem) => !current.items.some((item) => item.id === newItem.id)
+      );
+      apply({
+        items: [...current.items, ...fresh],
+        offset: current.offset + newItems.length,
+        hasMore: newItems.length === pageSize,
+      });
     } catch (err) {
       setError(err.message);
     }
   }
 
-  // להוסיף: שולחים לשרת, ומוסיפים לרשימה את מה שחזר (עם id)
+  // אחרי כל שינוי: רשימות אחרות של אותו resource כבר לא מעודכנות
+  function invalidateOthers() {
+    clearResource(resource, cacheKey);
+  }
+
   async function addItem(newItem) {
     try {
       const saved = await addData(resource, newItem);
-      setItems((prev) => [...prev, saved]);
+      apply({ items: [...dataRef.current.items, saved] });
+      invalidateOthers();
     } catch (err) {
       setError(err.message);
     }
   }
 
-  // לעדכן: שולחים לשרת, ומחליפים ברשימה את הפריט הישן בחדש
   async function updateItem(id, changes) {
     try {
       const updated = await updateData(resource, id, changes);
-      setItems((prev) => prev.map((item) => (item.id === id ? updated : item)));
+      apply({
+        items: dataRef.current.items.map((item) => (item.id === id ? updated : item)),
+      });
+      invalidateOthers();
     } catch (err) {
       setError(err.message);
     }
   }
 
-  // למחוק: מוחקים בשרת, ומוציאים מהרשימה
   async function removeItem(id) {
     try {
       await deleteData(resource, id);
-      setItems((prev) => prev.filter((item) => item.id !== id));
-
-      // הרשימה בשרת התקצרה באחד, אז גם המקום שממנו ממשיכים זז אחורה
-      // (בלי זה, "טען עוד" היה מדלג על פריט אחד)
-      if (pageSize > 0) {
-        setOffset((prev) => Math.max(prev - 1, 0));
-      }
+      const { items, offset } = dataRef.current;
+      apply({
+        items: items.filter((item) => item.id !== id),
+        // הרשימה בשרת התקצרה באחד - גם המקום שממנו ממשיכים זז אחורה
+        offset: pageSize > 0 ? Math.max(offset - 1, 0) : offset,
+      });
+      invalidateOthers();
     } catch (err) {
       setError(err.message);
     }
   }
 
   return {
-    items,
+    items: data.items,
     loading,
     error,
     addItem,
     updateItem,
     removeItem,
     loadMore,
-    hasMore,
+    hasMore: data.hasMore,
   };
 }
 
