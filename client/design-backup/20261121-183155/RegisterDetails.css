@@ -1,0 +1,26 @@
+/* RegisterDetails.css: לוחית צהובה, שדות בשתי עמודות (4 שדות ומעלה) */
+#root > div:has(> form > input:nth-of-type(4)) {
+  --plate: var(--yellow);
+  --plate-text: var(--ink);
+  max-width: 660px;
+}
+#root > div:has(> form > input:nth-of-type(4))::before {
+  content: "PASSENGER DETAILS · 03";
+}
+#root > div:has(> form > input:nth-of-type(4)) > h2 + p {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+#root > div:has(> form > input:nth-of-type(4)) > form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 18px;
+}
+#root > div:has(> form > input:nth-of-type(4)) > form button[type="submit"] {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  #root > div:has(> form > input:nth-of-type(4)) > form { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,74 @@
+
+/* =====================================================================
+   RegisterDetails.css: כרטיס רחב יותר להשלמת פרטים – שדות בשתי עמודות.
+   העמוד מזוהה לפי טופס עם 4 שדות ומעלה.
+   ===================================================================== */
+
+#root > div:has(> form > input:nth-of-type(4)) {
+  max-width: 640px;
+  transform: rotate(-0.5deg);
+  background:
+    linear-gradient(180deg, transparent 0 44px, var(--stamp-green) 44px 47px, transparent 47px),
+    repeating-linear-gradient(180deg, transparent 0 33px, var(--line-blue) 33px 34px),
+    var(--grain),
+    var(--card);
+  background-position: 0 0, 0 14px, 0 0, 0 0;
+  animation-name: details-card-rise;
+}
+
+#root > div:has(> form > input:nth-of-type(4))::before {
+  content: "№ 003 · PARTICULARS";
+}
+
+#root > div:has(> form > input:nth-of-type(4)) > h2:first-child::before {
+  content: "ALMOST THERE";
+  color: var(--stamp-red);
+  border-color: var(--stamp-red);
+  --stamp-rot: -7deg;
+}
+
+/* שורת הפתיחה "Hello ..." – כמו כתב יד בדיו כחולה */
+#root > div:has(> form > input:nth-of-type(4)) > h2 + p {
+  font-style: italic;
+  color: var(--ink-blue);
+}
+
+/* שתי עמודות של שדות */
+#root > div:has(> form > input:nth-of-type(4)) > form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 26px;
+  row-gap: 4px;
+}
+
+#root > div:has(> form > input:nth-of-type(4)) > form button[type="submit"] {
+  grid-column: 1 / -1;
+  justify-self: end;
+}
+
+/* שדות חובה (שם ומייל) – קו תחתון אדום */
+#root > div:has(> form > input:nth-of-type(4)) > form input:nth-of-type(-n + 2) {
+  border-bottom-color: var(--stamp-red);
+}
+
+#root > div:has(> form > input:nth-of-type(4)):hover,
+#root > div:has(> form > input:nth-of-type(4)):focus-within {
+  transform: rotate(0deg);
+}
+
+@keyframes details-card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(90px) rotate(3deg) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-0.5deg);
+  }
+}
+
+@media (max-width: 640px) {
+  #root > div:has(> form > input:nth-of-type(4)) > form {
+    grid-template-columns: 1fr;
+  }
+}

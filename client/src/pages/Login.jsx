@@ -27,9 +27,11 @@ function Login() {
     }
 
     try {
-      const users = await getData(
-        `users?username=${values.username}&password=${values.password}`
-      );
+      const params = new URLSearchParams({
+        username: values.username,
+        password: values.password,
+      });
+      const users = await getData(`users?${params}`);
 
       if (users.length === 0) {
         setError("Wrong username or password");

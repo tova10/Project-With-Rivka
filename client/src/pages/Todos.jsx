@@ -6,6 +6,7 @@ import { filterItems, sortItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
 import TodoItem from "../components/todos/TodoItem";
+import TodoProgress from "../components/fx/TodoProgress";
 import "../css/Todos.css";
 
 // השדות בטופס ההוספה
@@ -32,8 +33,11 @@ function Todos() {
 
   // החיפוש והמיון נשמרים בכתובת (נשארים אחרי ריענון)
   const [search, setSearch] = useUrlSearch("title");
-  const [sortBy, setSortBy] = useUrlState("sort", "id");
-
+  const [sortBy, setSortBy] = useUrlState(
+    "sort",
+    "id",
+    SORT_OPTIONS.map((option) => option.value)
+  );
   // מה מוצג: קודם מסננים, אחר כך ממיינים
   const visibleTodos = sortItems(filterItems(todos, search), sortBy);
 
@@ -47,6 +51,8 @@ function Todos() {
   return (
     <div>
       <h2>Todos</h2>
+
+      <TodoProgress todos={todos} />
 
       {error && <p>Error: {error}</p>}
 

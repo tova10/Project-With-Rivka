@@ -33,6 +33,7 @@ function Photos() {
     updateItem,
     removeItem,
     loadMore,
+    loadingMore,                                          // ← חדש (באג 6)
     hasMore,
   } = useResource("photos", `?albumId=${albumId}`, PAGE_SIZE);
 
@@ -81,7 +82,12 @@ function Photos() {
         ))}
       </div>
 
-      {hasMore && <button onClick={loadMore}>Load more</button>}
+      {/* בזמן טעינה: הכפתור מושבת ומציג "Loading..." */}   {/* ← שונה (באג 6) */}
+      {hasMore && (
+        <button onClick={loadMore} disabled={loadingMore}>
+          {loadingMore ? "Loading..." : "Load more"}
+        </button>
+      )}
     </div>
   );
 }

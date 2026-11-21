@@ -1,0 +1,14 @@
+/* ReadingTime.css: תגית זמן קריאה */
+.reading-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 3px 11px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+}
+.reading-time::before { content: "◔"; }

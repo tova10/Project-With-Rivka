@@ -1,25 +1,111 @@
+/* PostItem.css: שורה ברשימה. הפוסט הנבחר = חלונית קריאה קבועה */
 .post-item {
-  padding: 6px;
-  margin-bottom: 4px;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  border-radius: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+.post-item:not(.selected):hover { transform: translateX(6px); box-shadow: inset 8px 0 0 var(--accent); }
 
-/* הפוסט הנבחר: רקע צבעוני, מסגרת וטקסט מודגש */
+.post-header { display: flex; align-items: flex-start; gap: 10px; }
+
+.post-title-button {
+  --b-bg: transparent;
+  --b-fg: var(--ink);
+  --b-hover: transparent;
+  --b-hover-fg: var(--ink);
+  flex: 1;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 14px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  border: none;
+  border-radius: 16px;
+}
+.post-title-button:hover { transform: none; box-shadow: none; }
+
+/* ===== חלונית הקריאה ===== */
 .post-item.selected {
-  background: #fff6d5;
-  border: 2px solid #e0b100;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-/* התוכן של הפוסט הנבחר: לא מודגש, כדי שיהיה נוח לקרוא */
-.post-details {
+  position: fixed;
+  z-index: 5;
+  top: 24px;
+  bottom: 24px;
+  right: 24px;
+  width: calc((100vw - var(--side)) / 2 - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 30px 34px 40px;
   font-weight: normal;
-  margin-top: 6px;
+  border-radius: 28px;
+  box-shadow: var(--shadow-lg);
+  animation: pane-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+.post-item.selected .post-title-button {
+  padding: 0;
+  font-size: clamp(28px, 2.6vw, 40px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  cursor: default;
 }
 
-.post-details textarea {
-  display: block;
-  width: 100%;
-  min-height: 80px;
-  margin: 6px 0;
+.close-button {
+  --b-bg: var(--card);
+  --b-fg: var(--ink);
+  --b-hover: var(--accent);
+  --b-hover-fg: var(--on-accent);
+  flex: none;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  border-radius: 50%;
+}
+.close-button:hover { transform: rotate(90deg); box-shadow: none; }
+
+.post-details { margin-top: 18px; }
+.post-details > p {
+  max-width: 62ch;
+  margin: 0 0 20px;
+  font-size: 18px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.post-details > input,
+.post-details > textarea { display: block; width: 100%; margin: 8px 0; }
+.post-details textarea { min-height: 140px; }
+
+.post-details > p ~ button:first-of-type {
+  --b-bg: var(--card);
+  --b-fg: var(--ink);
+  --b-hover: var(--ink);
+  --b-hover-fg: var(--paper);
+}
+.post-details > button:nth-of-type(2):not(:last-of-type) {
+  --b-bg: var(--card);
+  --b-fg: var(--danger);
+  --b-hover: var(--danger);
+  --b-hover-fg: #fff;
+}
+.post-details > p ~ button:last-of-type {
+  --b-bg: var(--accent);
+  --b-fg: var(--on-accent);
+  --b-hover: var(--ink);
+  --b-hover-fg: var(--paper);
+}
+
+@keyframes pane-in { from { opacity: 0; transform: translateX(40px); } }
+
+@media (max-width: 1100px) {
+  .post-item.selected {
+    position: static;
+    width: auto;
+    margin: 8px 0;
+    padding: 22px 20px 26px;
+    animation-name: rise;
+  }
 }

@@ -30,8 +30,26 @@ function useResource(resource, query = "", pageSize = 0) {
   const [loading, setLoading] = useState(() => !getCache(cacheKey));
   const [error, setError] = useState("");
 
+  // המפתח של הרינדור הקודם, כדי לזהות מעבר לרשימה אחרת
+  const [prevKey, setPrevKey] = useState(cacheKey);                  // ← lint 5
+
+  // האם "הבא עוד" באמצע (להצגה: כפתור מושבת + "Loading...")
+  const [loadingMore, setLoadingMore] = useState(false);             // ← באג 6
+
   // עותק עדכני תמיד של data, כדי שפעולות מהירות ברצף לא ידרסו זו את זו
   const dataRef = useRef(data);
+
+  // האם "הבא עוד" באמצע (לבדיקה מיידית: נעילה נגד לחיצה כפולה)
+  const loadingMoreRef = useRef(false);                              // ← באג 6
+
+  // עברנו לרשימה אחרת: מאפסים מיד, עוד לפני שמשהו מוצג
+  if (prevKey !== cacheKey) {                                        // ← lint 5
+    const cached = getCache(cacheKey);
+    setPrevKey(cacheKey);
+    setData(cached || EMPTY);
+    setLoading(!cached);
+    setError("");
+  }
 
   // שמירת שינוי: גם בתצוגה וגם ב-cache
   function apply(changes) {
@@ -41,23 +59,16 @@ function useResource(resource, query = "", pageSize = 0) {
     setCache(cacheKey, next);
   }
 
-  // טעינה: קודם בודקים ב-cache, ורק אם אין - פונים לשרת
+  // טעינה: אם אין ב-cache - פונים לשרת
   useEffect(() => {
     let ignore = false;
 
     const cached = getCache(cacheKey);
-    if (cached) {
-      dataRef.current = cached;
-      setData(cached);
-      setError("");
-      setLoading(false);
-      return;
-    }
+    dataRef.current = cached || EMPTY;                               // ← lint 5
+    if (cached) return; // כבר יש מידע ב-state, אין מה לעשות          // ← lint 5
 
     async function load() {
-      setLoading(true);
-      setError("");
-      try {
+      try {                                                          // ← lint 5: בלי setLoading/setError כאן
         const items = await getData(buildPath(resource, query, pageSize, 0));
         if (ignore) return;
         const next = {
@@ -84,6 +95,11 @@ function useResource(resource, query = "", pageSize = 0) {
 
   // להביא עוד: ממשיכים מהמקום שעצרנו
   async function loadMore() {
+    // כבר מביאים: מתעלמים מלחיצה נוספת
+    if (loadingMoreRef.current) return;                              // ← באג 6
+    loadingMoreRef.current = true;                                   // ← באג 6
+    setLoadingMore(true);                                            // ← באג 6
+
     try {
       const newItems = await getData(
         buildPath(resource, query, pageSize, dataRef.current.offset)
@@ -100,6 +116,10 @@ function useResource(resource, query = "", pageSize = 0) {
       });
     } catch (err) {
       setError(err.message);
+    } finally {                                                      // ← באג 6
+      // משחררים את הנעילה - גם אם הייתה שגיאה
+      loadingMoreRef.current = false;
+      setLoadingMore(false);
     }
   }
 
@@ -153,6 +173,7 @@ function useResource(resource, query = "", pageSize = 0) {
     updateItem,
     removeItem,
     loadMore,
+    loadingMore,                                                     // ← באג 6
     hasMore: data.hasMore,
   };
 }

@@ -1,0 +1,103 @@
+
+/* =====================================================================
+   SearchBar.css: "פתק חיפוש בקטלוג" עם זכוכית מגדלת,
+   ומונה התוצאות ("Showing X of Y") שמעוצב ככרטיס כניסה מנוקב
+   ===================================================================== */
+
+.search-bar {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 14px;
+  padding: 12px 18px 12px 54px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 21px, var(--line-blue) 21px 22px),
+    var(--grain),
+    var(--note-sky);
+  border: 2px dashed rgba(35, 64, 122, 0.45);
+  border-radius: 4px;
+  box-shadow: var(--shadow-paper);
+  transform: rotate(-0.5deg);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.search-bar:focus-within {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* זכוכית מגדלת מצוירת */
+.search-bar::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  translate: 0 -50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Ccircle cx='11' cy='11' r='8' fill='%23ffffff88' stroke='%232a2520' stroke-width='2.5'/%3E%3Cpath d='M7 8a5 5 0 0 1 4-3' stroke='%23fff' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M17 17l8 8' stroke='%236e4024' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+
+/* כשמקלידים – הזכוכית "סורקת" */
+.search-bar:focus-within::before {
+  animation: magnify 1.6s ease-in-out infinite;
+}
+
+.search-bar label {
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+
+.search-bar input {
+  min-width: 220px;
+}
+
+/* ===================== מונה תוצאות – כרטיס כניסה ===================== */
+.search-bar + p,
+.search-bar + div:has(> select) + p {
+  display: inline-block;
+  position: relative;
+  margin: 4px 0 16px;
+  padding: 5px 22px;
+  font-family: var(--font-type);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5a1d18;
+  background: var(--grain), #f4b9a8;
+  /* חריצים עגולים בצדדים – כמו כרטיס כניסה שנתלש */
+  -webkit-mask:
+    radial-gradient(circle 7px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 7px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 7px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 7px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+  transform: rotate(1deg);
+}
+
+.search-bar + p::before,
+.search-bar + div:has(> select) + p::before {
+  content: "ADMIT · ";
+  font-weight: bold;
+}
+
+@keyframes magnify {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(3px, -3px) rotate(-8deg); }
+  50% { transform: translate(5px, 1px) rotate(0deg); }
+  75% { transform: translate(2px, 3px) rotate(8deg); }
+}
+
+@media (max-width: 640px) {
+  .search-bar {
+    display: flex;
+  }
+  .search-bar input {
+    min-width: 0;
+    flex: 1;
+  }
+}

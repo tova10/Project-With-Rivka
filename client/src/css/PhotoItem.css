@@ -1,23 +1,78 @@
+/* PhotoItem.css: אריח תמונה. חלק מהאריחים גדולים / רחבים / גבוהים */
 .photo-item {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 8px;
-  width: 160px;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  width: auto;
+  padding: 10px;
+  overflow: hidden;
+  background: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: 18px;
+  animation: rise 0.45s backwards;
 }
+.photo-item:nth-child(7n + 1) { grid-column: span 2; grid-row: span 2; }
+.photo-item:nth-child(7n + 4) { grid-column: span 2; }
+.photo-item:nth-child(7n + 6) { grid-row: span 2; }
 
 .photo-item img {
-  width: 150px;
-  height: 150px;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  display: block;
+  border-radius: 0;
+  font-size: 11px;
+  color: var(--soft);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+.photo-item:hover img { transform: scale(1.07); }
 
 .photo-item p {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 44px 14px 12px;
   font-size: 13px;
-  margin: 6px 0;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+.photo-item:hover p,
+.photo-item:focus-within p { transform: none; }
 
-.photo-item input {
-  width: 100%;
-  margin-bottom: 4px;
+.photo-item input { width: 100%; font-size: 13px; }
+
+.photo-item > button {
+  --b-bg: var(--card);
+  --b-fg: var(--ink);
+  position: absolute;
+  top: 10px;
+  z-index: 2;
+  margin: 0;
+  opacity: 0;
+}
+.photo-item > button:first-of-type { left: 10px; }
+.photo-item > button:last-of-type {
+  --b-fg: var(--danger);
+  --b-hover: var(--danger);
+  --b-hover-fg: #fff;
+  right: 10px;
+}
+.photo-item:hover > button,
+.photo-item:focus-within > button,
+.photo-item:has(> input) > button { opacity: 1; }
+
+@media (hover: none) {
+  .photo-item p { transform: none; }
+  .photo-item > button { opacity: 1; }
 }

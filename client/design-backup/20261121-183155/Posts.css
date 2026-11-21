@@ -1,0 +1,20 @@
+/* Posts.css: מתג הקווים (שלי / כולם) ורשימת הכרטיסים */
+main > div > h2 + button {
+  --btn-bg: var(--blue);
+  --btn-text: #fff;
+  --btn-edge: #003f73;
+  margin: 0 0 6px 16px;
+  vertical-align: 8px;
+}
+main > div > h2 + button::before { content: "⇄  "; }
+
+ul:has(> .post-item) {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 0 10px;
+}
+
+@media (max-width: 640px) {
+  main > div > h2 + button { display: block; margin-left: 0; }
+}

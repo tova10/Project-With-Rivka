@@ -1,0 +1,274 @@
+/* THE DEPARTURE BOARD — index.css: משתנים, בסיס, טפסים, כפתורים */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap");
+
+:root {
+  --board: #0f1114;
+  --panel: #171a1f;
+  --panel-2: #1f232a;
+  --edge: #2c313a;
+  --amber: #ffb400;
+  --amber-dim: rgba(255, 180, 0, 0.16);
+  --white: #f1f1ec;
+  --muted: #8b929d;
+  --ink: #15171b;
+  --ticket: #f5ecd8;
+  --red: #e4002b;
+  --blue: #0072ce;
+  --green: #00a651;
+  --yellow: #f7c600;
+  --font-sign: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scrollbar-color: var(--amber) var(--board); }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sign);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--white);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 100% 26px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 26px 100%,
+    radial-gradient(ellipse at 50% -20%, #2b313b, var(--board) 65%);
+  background-color: var(--board);
+  background-attachment: fixed;
+}
+
+::selection { background: var(--amber); color: var(--ink); }
+
+#root { max-width: 1060px; margin: 0 auto; padding: 28px 20px 70px; }
+
+h1, h2 { font-weight: 900; text-transform: uppercase; }
+h1 { margin: 0; font-size: 30px; letter-spacing: 0.02em; }
+
+/* כותרת = לוחית מתהפכת של לוח יציאות */
+h2 {
+  position: relative;
+  display: inline-block;
+  margin: 4px 0 20px;
+  padding: 6px 18px;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+  text-shadow: 0 0 12px rgba(255, 180, 0, 0.45);
+  background: linear-gradient(180deg, #2d3239 0 49%, #000 49% 51%, #1e2127 51%);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 16px rgba(0, 0, 0, 0.5);
+  animation: flap 0.7s cubic-bezier(0.3, 1.3, 0.5, 1) backwards;
+}
+
+h4 { margin: 10px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
+p { margin: 6px 0; }
+
+a {
+  color: var(--amber);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+a:hover { border-bottom-color: var(--amber); }
+
+ul { list-style: none; padding: 0; margin: 0; }
+
+/* ===== טפסים: שדות כמו צג LED ===== */
+form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0; }
+
+input, select, textarea {
+  padding: 9px 12px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--amber);
+  background: #0a0b0d;
+  border: 2px solid var(--edge);
+  border-radius: 6px;
+  caret-color: var(--amber);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input::placeholder, textarea::placeholder { color: #5d636d; }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-dim), inset 0 0 14px rgba(255, 180, 0, 0.12);
+}
+textarea { line-height: 1.6; resize: vertical; }
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 34px;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--amber) 50%),
+    linear-gradient(135deg, var(--amber) 50%, transparent 50%);
+  background-position: calc(100% - 17px) 52%, calc(100% - 11px) 52%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* תיבת סימון = נורית סטטוס (כבויה כתומה / דולקת ירוקה) */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  vertical-align: middle;
+  border: 2px solid #3a3f48;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #6b4a00, #2a1d00);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition: box-shadow 0.25s, transform 0.15s;
+}
+input[type="checkbox"]:hover { transform: scale(1.15); }
+input[type="checkbox"]:checked {
+  background: radial-gradient(circle at 35% 35%, #b6ffcf, var(--green) 55%, #006b34);
+  box-shadow: 0 0 10px 2px rgba(0, 166, 81, 0.7), inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+}
+input[type="checkbox"]:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* ===== כפתורים: לחצני שילוט. הצבע נקבע במשתנים ===== */
+button {
+  --btn-bg: #2b3038;
+  --btn-text: var(--white);
+  --btn-edge: #0b0c0f;
+  padding: 8px 18px;
+  margin: 3px 6px 3px 0;
+  font-family: var(--font-sign);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--btn-text);
+  background: var(--btn-bg);
+  border: none;
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 3px 0 var(--btn-edge), 0 6px 12px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: transform 0.08s, box-shadow 0.08s, filter 0.2s;
+}
+button:hover { filter: brightness(1.18); }
+button:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 var(--btn-edge), 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+button:focus-visible { outline: 2px dashed var(--amber); outline-offset: 3px; }
+
+form button[type="submit"] { --btn-bg: var(--amber); --btn-text: var(--ink); --btn-edge: #9c6e00; }
+li button, .photo-item button { padding: 5px 12px; font-size: 11px; }
+
+/* טפסי הוספה בעמודי התוכן */
+main > div > form {
+  position: relative;
+  padding: 12px 14px 12px 58px;
+  background: var(--panel-2);
+  border: 2px dashed var(--edge);
+  border-radius: 10px;
+}
+main > div > form::before {
+  content: "+";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--ink);
+  background: var(--amber);
+  border-radius: 6px;
+  transition: transform 0.4s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+main > div > form:focus-within { border-color: var(--amber); border-style: solid; }
+main > div > form:focus-within::before { transform: rotate(90deg); }
+main > div > form input { flex: 1; min-width: 180px; }
+
+/* טעינה */
+main > p:only-child {
+  padding: 40px 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+main > p:only-child::after { content: " ▮"; animation: blink 0.8s steps(1) infinite; }
+
+/* דף 404 */
+#root > h2:only-child {
+  display: block;
+  width: fit-content;
+  max-width: 90%;
+  margin: 16vh auto 0;
+  padding: 22px 36px;
+  font-size: 34px;
+  text-align: center;
+}
+#root > h2:only-child::after {
+  content: "SERVICE CANCELLED";
+  display: block;
+  margin-top: 10px;
+  font-size: 15px;
+  letter-spacing: 0.3em;
+  color: #ff4d5e;
+  text-shadow: 0 0 10px rgba(255, 40, 60, 0.7);
+  animation: blink 1s steps(1) infinite;
+}
+
+/* ===== אנימציות משותפות ===== */
+@keyframes flap {
+  0% { transform: perspective(400px) rotateX(90deg); }
+  45% { transform: perspective(400px) rotateX(-25deg); }
+  75% { transform: perspective(400px) rotateX(10deg); }
+  100% { transform: perspective(400px) rotateX(0deg); }
+}
+@keyframes blink { 50% { opacity: 0.15; } }
+@keyframes pulse { 50% { opacity: 0.45; } }
+@keyframes nudge { 50% { transform: translateX(5px); } }
+@keyframes arrive {
+  from { opacity: 0; transform: translateX(70px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes swing {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  50% { transform: rotate(-4deg); }
+  75% { transform: rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #root { padding: 16px 10px 40px; }
+  h2 { font-size: 20px; letter-spacing: 0.08em; }
+}

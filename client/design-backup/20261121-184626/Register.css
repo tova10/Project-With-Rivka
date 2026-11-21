@@ -1,0 +1,14 @@
+/* Register.css: "שלב 1 מתוך 2" + פס התקדמות (טופס עם 3 שדות בדיוק) */
+#root > div:has(> form > input:nth-of-type(3)):not(:has(> form > input:nth-of-type(4)))::before {
+  content: "Step 1 of 2 · Account";
+}
+#root > div:has(> form > input:nth-of-type(3)):not(:has(> form > input:nth-of-type(4)))::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 40px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, var(--accent) 50%, var(--line) 50%);
+}

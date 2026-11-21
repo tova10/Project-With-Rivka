@@ -1,0 +1,20 @@
+.comments {
+  margin-top: 10px;
+  padding-left: 16px;
+  border-left: 3px solid #ccc;
+}
+
+.comment-item {
+  margin-bottom: 10px;
+}
+
+.comment-item small {
+  color: #666;
+}
+
+.comment-item textarea {
+  display: block;
+  width: 100%;
+  min-height: 60px;
+  margin: 6px 0;
+}

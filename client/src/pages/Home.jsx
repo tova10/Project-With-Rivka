@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import Greeting from "../components/fx/Greeting";
 import { UserContext } from "../context/UserContext";
 import "../css/Home.css";
 
@@ -15,13 +16,13 @@ function Home() {
   return (
     <div>
       <header>
-        <h1>Welcome, {user?.name}</h1>
+        <Greeting name={user?.name} />
 
         <nav>
-          <Link to="info">Info</Link> |{" "}
-          <Link to="todos">Todos</Link> |{" "}
-          <Link to="posts">Posts</Link> |{" "}
-          <Link to="albums">Albums</Link> |{" "}
+          <NavLink to="info">Info</NavLink> |{" "}
+          <NavLink to="todos">Todos</NavLink> |{" "}
+          <NavLink to="posts">Posts</NavLink> |{" "}
+          <NavLink to="albums">Albums</NavLink> |{" "}
           <button onClick={handleLogout}>Logout</button>
         </nav>
       </header>

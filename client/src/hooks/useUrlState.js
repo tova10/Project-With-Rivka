@@ -1,11 +1,16 @@
 import { useSearchParams } from "react-router-dom";
 
 // שמירת ערך בכתובת (?key=value), כדי שיישאר אחרי ריענון
-// key          = שם הפרמטר בכתובת
-// defaultValue = ערך ברירת המחדל (לא נכתב בכתובת)
-export function useUrlState(key, defaultValue = "") {
+// key           = שם הפרמטר בכתובת
+// defaultValue  = ערך ברירת המחדל (לא נכתב בכתובת)
+// allowedValues = (לא חובה) רשימת הערכים המותרים. ערך אחר בכתובת = ברירת המחדל
+export function useUrlState(key, defaultValue = "", allowedValues = null) {    // ← נוסף allowedValues
   const [params, setParams] = useSearchParams();
-  const value = params.get(key) ?? defaultValue;
+
+  let value = params.get(key) ?? defaultValue;
+  if (allowedValues && !allowedValues.includes(value)) {                  // ← חדש
+    value = defaultValue;
+  }
 
   function setValue(newValue) {
     setParams(
@@ -24,12 +29,24 @@ export function useUrlState(key, defaultValue = "") {
 
 // חיפוש בכתובת: by = לפי איזה שדה, q = הטקסט
 // (שני הפרמטרים מתעדכנים יחד, בפעולה אחת)
-export function useUrlSearch(defaultField = "title") {
+// defaultField  = השדה שנבחר כברירת מחדל
+// allowedFields = רשימת השדות שמותר לחפש לפיהם. שדה אחר בכתובת = ברירת המחדל
+export function useUrlSearch(defaultField, allowedFields) {                   // ← נוסף allowedFields
   const [params, setParams] = useSearchParams();
-  const search = {
-    field: params.get("by") ?? defaultField,
-    text: params.get("q") ?? "",
-  };
+
+  // השדה: רק אם הוא ברשימה המותרת                                         // ← חדש
+  let field = params.get("by") ?? defaultField;
+  if (!allowedFields.includes(field)) {
+    field = defaultField;
+  }
+
+  // הטקסט: במצב ביצוע מותרים רק "true" / "false" (אחרת - בלי סינון)      // ← חדש
+  let text = params.get("q") ?? "";
+  if (field === "completed" && text !== "true" && text !== "false") {
+    text = "";
+  }
+
+  const search = { field, text };                                         // ← שונה
 
   function setSearch(newSearch) {
     setParams(

@@ -1,1 +1,41 @@
-/* Posts styles */
+/* Posts.css: מסך מפוצל – רשימה משמאל, חלונית קריאה קבועה מימין */
+main > div:has(> ul > .post-item) {
+  margin-right: calc((100vw - var(--side)) / 2 - 24px);
+}
+
+main > div > h2 + button {
+  --b-bg: var(--card);
+  --b-fg: var(--ink);
+  --b-hover: var(--ink);
+  --b-hover-fg: var(--paper);
+  margin: -12px 0 6px;
+  box-shadow: var(--shadow);
+}
+main > div > h2 + button::before { content: "⇄"; }
+
+/* חלונית ריקה כשלא נבחר פוסט */
+main > div:has(> ul > .post-item):not(:has(.post-item.selected))::after {
+  content: "← Pick a post. It opens right here.";
+  position: fixed;
+  top: 24px;
+  bottom: 24px;
+  right: 24px;
+  width: calc((100vw - var(--side)) / 2 - 24px);
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+  border: 2px dashed var(--soft);
+  border-radius: 28px;
+}
+
+ul:has(> .post-item) { display: flex; flex-direction: column; gap: 8px; }
+
+@media (max-width: 1100px) {
+  main > div:has(> ul > .post-item) { margin-right: 0; }
+  main > div:has(> ul > .post-item):not(:has(.post-item.selected))::after { display: none; }
+}

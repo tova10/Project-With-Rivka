@@ -1,0 +1,117 @@
+/* PostItem.css: שורות תוכן עניינים. פוסט פתוח = כרטיס קריאה רחב */
+.post-item {
+  position: relative;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.25s;
+}
+.post-item:not(.selected):hover { background: linear-gradient(90deg, var(--accent-soft), transparent 70%); }
+
+.post-header { display: flex; align-items: center; gap: 10px; }
+
+.post-title-button {
+  --b-bg: transparent;
+  --b-fg: var(--ink);
+  --b-hover: transparent;
+  --b-hover-fg: var(--accent);
+  flex: 1;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 18px 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
+  border-radius: 0;
+}
+.post-title-button:active { transform: none; }
+.post-title-button::after {
+  content: "→";
+  margin-left: auto;
+  padding-left: 16px;
+  color: var(--muted);
+  transition: transform 0.25s, color 0.2s;
+}
+.post-title-button:hover::after { transform: translateX(4px); color: var(--accent); }
+
+/* ===== פוסט פתוח ===== */
+.post-item.selected {
+  margin: 12px -20px;
+  padding: 6px 20px 24px;
+  font-weight: normal;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  animation: rise 0.35s ease-out backwards;
+}
+.post-item.selected .post-title-button {
+  padding-top: 18px;
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.1;
+  cursor: default;
+}
+.post-item.selected .post-title-button:hover { color: var(--ink); }
+.post-item.selected .post-title-button::after { content: none; }
+
+.close-button {
+  --b-bg: var(--surface);
+  --b-fg: var(--ink);
+  --b-border: var(--line);
+  --b-hover: var(--ink);
+  --b-hover-fg: var(--surface);
+  flex: none;
+  width: 38px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  transition: transform 0.3s, background-color 0.2s, color 0.2s;
+}
+.close-button:hover { transform: rotate(90deg); }
+
+.post-details { margin-top: 2px; }
+.post-details > p {
+  max-width: 64ch;
+  margin: 0 0 18px;
+  font-size: 16.5px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  white-space: pre-line;
+}
+.post-details > input,
+.post-details > textarea { display: block; width: 100%; margin: 6px 0; }
+.post-details textarea { min-height: 120px; }
+
+/* עריכה = מתאר, מחיקה = אדום, תגובות = כתום רך */
+.post-details > p ~ button:first-of-type {
+  --b-bg: transparent;
+  --b-fg: var(--ink);
+  --b-border: var(--line);
+  --b-hover: var(--ink);
+  --b-hover-fg: var(--surface);
+}
+.post-details > button:nth-of-type(2):not(:last-of-type) {
+  --b-bg: transparent;
+  --b-fg: var(--danger);
+  --b-hover: var(--danger-soft);
+  --b-hover-fg: var(--danger);
+}
+.post-details > p ~ button:last-of-type {
+  --b-bg: var(--accent-soft);
+  --b-fg: var(--accent);
+  --b-border: transparent;
+  --b-hover: var(--accent);
+  --b-hover-fg: #fff;
+}
+.post-details > textarea ~ button:last-of-type {
+  --b-bg: transparent;
+  --b-fg: var(--ink);
+  --b-border: var(--line);
+}
+
+@media (max-width: 640px) {
+  .post-item.selected { margin: 10px -8px; padding: 4px 12px 18px; }
+  .post-item.selected .post-title-button { font-size: 24px; }
+}

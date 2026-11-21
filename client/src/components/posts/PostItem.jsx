@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useForm from "../../hooks/useForm";
 import Comments from "./Comments";
+import ReadingTime from "../fx/ReadingTime";
 import "../../css/PostItem.css";
 
 // post       = הפוסט להצגה
@@ -66,6 +67,7 @@ function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
             </>
           ) : (
             <>
+              <ReadingTime text={post.body} />
               <p>{post.body}</p>
               {isOwner && (
                 <>

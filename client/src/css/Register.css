@@ -1,1 +1,18 @@
-/* Register styles */
+/* Register.css: צבעים אחרים + "Step 1 / 2" (טופס עם 3 שדות בדיוק) */
+#root > div:has(> form > input:nth-of-type(3)):not(:has(> form > input:nth-of-type(4))) {
+  --art-a: #36b5ff;
+  --art-b: #ff5fa2;
+  --art-bg: #ffd23f;
+  --hello: "Join us.";
+}
+#root > div:has(> form > input:nth-of-type(3)):not(:has(> form > input:nth-of-type(4))) > h2::before {
+  content: "Step 1 / 2";
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

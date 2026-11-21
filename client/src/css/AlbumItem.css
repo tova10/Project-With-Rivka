@@ -1,7 +1,134 @@
+/* AlbumItem.css: עטיפת תקליט עם עיצוב משלה. בריחוף התקליט יוצא ומסתובב */
 .album-item {
-  padding: 4px 0;
+  --sleeve: #ff5b2e;
+  --label: #ffd23f;
+  --art: radial-gradient(circle at 70% 32%, #121212 0 22%, transparent 22.5%);
+  position: relative;
+  isolation: isolate;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  aspect-ratio: 1;
+  padding: 16px;
+  scroll-snap-align: start;
+  transition: transform 0.3s cubic-bezier(0.3, 1.5, 0.5, 1);
+  animation: rise 0.5s backwards;
+}
+.album-item:nth-child(6n + 2) {
+  --sleeve: #c4f03a;
+  --label: #ff5fa2;
+  --art: repeating-linear-gradient(90deg, transparent 0 18px, rgba(18, 18, 18, 0.9) 18px 22px);
+}
+.album-item:nth-child(6n + 3) {
+  --sleeve: #ff5fa2;
+  --label: #36b5ff;
+  --art: linear-gradient(135deg, transparent 50%, #121212 50%);
+}
+.album-item:nth-child(6n + 4) {
+  --sleeve: #36b5ff;
+  --label: #c4f03a;
+  --art: radial-gradient(circle at 28% 30%, #fffdf8 0 16%, transparent 16.5%), radial-gradient(circle at 72% 62%, #121212 0 24%, transparent 24.5%);
+}
+.album-item:nth-child(6n + 5) {
+  --sleeve: #ffd23f;
+  --label: #8b6cff;
+  --art: repeating-radial-gradient(circle at 100% 100%, transparent 0 16px, rgba(18, 18, 18, 0.85) 16px 20px);
+}
+.album-item:nth-child(6n + 6) {
+  --sleeve: #8b6cff;
+  --label: #ff5b2e;
+  --art: conic-gradient(from 45deg, #121212 0 25%, transparent 0 50%, #121212 0 75%, transparent 0);
+}
+.album-item:nth-child(2) { animation-delay: 0.05s; }
+.album-item:nth-child(3) { animation-delay: 0.1s; }
+.album-item:nth-child(4) { animation-delay: 0.15s; }
+.album-item:nth-child(n + 5) { animation-delay: 0.2s; }
+
+.album-item:hover { transform: translateY(-6px) rotate(-1deg); }
+
+/* העטיפה */
+.album-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--art), var(--sleeve);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
 }
 
-.album-item a {
-  margin-right: 8px;
+/* התקליט (מציץ מלמעלה) */
+.album-item::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  aspect-ratio: 1;
+  z-index: -2;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--paper) 0 3%, var(--label) 3.5% 17%, #0d0d0d 17.5% 19%, transparent 19.5%),
+    repeating-radial-gradient(circle, #151515 0 2px, #2a2a2a 2px 3px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  translate: 0 -8%;
+  transition: translate 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.album-item:hover::before {
+  translate: 0 -42%;
+  animation: spin 2.4s linear infinite;
+}
+
+.album-item > span:first-child {
+  align-self: flex-start;
+  padding: 2px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 999px;
+}
+.album-item > span:first-child::before { content: "No. "; }
+
+.album-item > a {
+  margin-top: auto;
+  padding: 8px 10px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+/* כל העטיפה לחיצה */
+.album-item > a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.album-item > button {
+  --b-bg: var(--card);
+  --b-fg: var(--danger);
+  --b-hover: var(--danger);
+  --b-hover-fg: #fff;
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  z-index: 2;
+  margin: 0;
+  opacity: 0;
+}
+.album-item:hover > button,
+.album-item > button:focus-visible { opacity: 1; }
+
+@media (hover: none) {
+  .album-item > button { opacity: 1; }
 }

@@ -23,8 +23,10 @@ function Albums() {
     useResource("albums", `?userId=${user?.id}`);
 
   // החיפוש נשמר בכתובת (נשאר אחרי ריענון)
-  const [search, setSearch] = useUrlSearch("title");
-
+  const [search, setSearch] = useUrlSearch(
+    "title",
+    SEARCH_FIELDS.map((field) => field.value)
+  );
   // מה מוצג: הרשימה אחרי חיפוש
   const visibleAlbums = filterItems(albums, search);
 

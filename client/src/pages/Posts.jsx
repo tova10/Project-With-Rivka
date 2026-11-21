@@ -34,8 +34,10 @@ function Posts() {
     useResource("posts", query);
 
   // החיפוש נשמר בכתובת (נשאר אחרי ריענון)
-  const [search, setSearch] = useUrlSearch("title");
-
+   const [search, setSearch] = useUrlSearch(
+    "title",
+    SEARCH_FIELDS.map((field) => field.value)
+  );
   // איזה פוסט פתוח ("" = אף אחד), נשמר בכתובת: ?post=5
   const [selected, setSelected] = useUrlState("post");
 

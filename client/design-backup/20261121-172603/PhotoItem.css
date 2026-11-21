@@ -1,0 +1,118 @@
+
+/* =====================================================================
+   PhotoItem.css: כל תמונה מודבקת בדף האלבום עם פינות שחורות,
+   במסגרת לבנה עבה. תמונה חדשה "מתפתחת" כמו תמונת פולורויד,
+   וקצת דהויה – עד שמרחפים עליה.
+   ===================================================================== */
+
+.photo-item {
+  position: relative;
+  width: auto;
+  padding: 10px 10px 12px;
+  background: var(--grain), #fbf9f3;
+  border: none;
+  border-radius: 1px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), 0 12px 18px -8px rgba(0, 0, 0, 0.8);
+  transform: rotate(var(--tilt, -2deg));
+  transition: transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1), box-shadow 0.3s;
+}
+
+.photo-item:nth-child(3n + 2) { --tilt: 1.6deg; }
+.photo-item:nth-child(3n + 3) { --tilt: -0.6deg; }
+.photo-item:nth-child(4n + 4) { --tilt: 2.4deg; }
+
+.photo-item:hover,
+.photo-item:focus-within {
+  z-index: 3;
+  transform: rotate(0deg) scale(1.08);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), 0 26px 30px -10px rgba(0, 0, 0, 0.9);
+}
+
+/* ארבע פינות הדבקה שחורות */
+.photo-item::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, #111 0 50%, transparent 50%) top left / 24px 24px no-repeat,
+    linear-gradient(225deg, #111 0 50%, transparent 50%) top right / 24px 24px no-repeat,
+    linear-gradient(45deg, #111 0 50%, transparent 50%) bottom left / 24px 24px no-repeat,
+    linear-gradient(315deg, #111 0 50%, transparent 50%) bottom right / 24px 24px no-repeat;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18));
+}
+
+.photo-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 0;
+  overflow: hidden;
+  font-size: 11px; /* טקסט חלופי, אם התמונה לא נטענה */
+  color: var(--ink-soft);
+  background: #d8d2c4;
+  filter: sepia(0.35) saturate(0.85) contrast(0.95);
+  transition: filter 0.5s;
+  animation: develop 1.8s ease-out backwards;
+}
+
+.photo-item:hover img {
+  filter: none;
+}
+
+/* כיתוב התמונה – כמו בכתב יד מתחת לתמונה */
+.photo-item p {
+  margin: 8px 2px 6px;
+  font-family: var(--font-type);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ink-blue);
+  overflow-wrap: anywhere;
+}
+
+.photo-item input {
+  width: 100%;
+  margin: 6px 0 4px;
+  font-size: 13px;
+}
+
+/* כפתורי העריכה מופיעים כשמרחפים על התמונה */
+.photo-item > button {
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.08s;
+}
+
+.photo-item:hover > button,
+.photo-item > button:focus-visible {
+  opacity: 1;
+}
+
+.photo-item > button:last-of-type {
+  --key-top: #d2564a;
+  --key-bottom: #922219;
+  --key-edge: #4f0f0a;
+  --key-text: #fff3ef;
+}
+
+.photo-item > button:first-of-type {
+  --key-top: #fffaf0;
+  --key-bottom: #e2d6bd;
+  --key-edge: #9e8f73;
+  --key-text: var(--ink);
+}
+
+/* "פיתוח" התמונה – מלבן לבן שהופך לתמונה */
+@keyframes develop {
+  0% {
+    filter: brightness(2.2) sepia(1) blur(3px) saturate(0);
+  }
+  60% {
+    filter: brightness(1.2) sepia(0.7) blur(0.5px) saturate(0.5);
+  }
+  100% {
+    filter: sepia(0.35) saturate(0.85) contrast(0.95);
+  }
+}

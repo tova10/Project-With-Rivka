@@ -1,0 +1,56 @@
+/* TodoItem.css: שורה נקייה. הפעולות מופיעות רק בריחוף */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 58px;
+  padding: 8px 8px;
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.2s;
+}
+.todo-item:hover { background: var(--bg); }
+
+.todo-item > span:first-child {
+  flex: none;
+  min-width: 42px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.todo-item > span:nth-of-type(2) {
+  flex: 1;
+  font-size: 15px;
+  text-decoration: line-through;
+  text-decoration-color: transparent;
+  transition: color 0.3s, text-decoration-color 0.3s;
+}
+.todo-item:has(> input[type="checkbox"]:checked) > span:nth-of-type(2) {
+  color: var(--muted);
+  text-decoration-color: var(--muted);
+}
+
+.todo-item > input:not([type="checkbox"]) { flex: 1; }
+
+.todo-item > button { opacity: 0; transform: translateX(6px); }
+.todo-item:hover > button,
+.todo-item:focus-within > button,
+.todo-item:has(> input:not([type="checkbox"])) > button { opacity: 1; transform: none; }
+
+.todo-item > button:first-of-type {
+  --b-bg: transparent;
+  --b-fg: var(--ink);
+  --b-border: var(--line);
+  --b-hover: var(--ink);
+  --b-hover-fg: var(--surface);
+}
+.todo-item > button:last-of-type {
+  --b-bg: transparent;
+  --b-fg: var(--danger);
+  --b-hover: var(--danger-soft);
+  --b-hover-fg: var(--danger);
+}
+
+@media (hover: none) {
+  .todo-item > button { opacity: 1; transform: none; }
+}

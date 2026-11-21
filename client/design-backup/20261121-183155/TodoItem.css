@@ -1,0 +1,68 @@
+/* TodoItem.css: שורה בלוח היציאות, עם תווית סטטוס BOARDING / DEPARTED */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  border-bottom: 1px solid #1c1f25;
+  transition: background-color 0.2s;
+}
+.todo-item:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
+.todo-item:hover { background: var(--amber-dim); }
+
+.todo-item > span:first-child {
+  flex: none;
+  min-width: 56px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+.todo-item > span:nth-of-type(2) {
+  flex: 1;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--white);
+  transition: color 0.3s;
+}
+.todo-item:has(> input[type="checkbox"]:checked) > span:nth-of-type(2) {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--green);
+}
+
+.todo-item > input:not([type="checkbox"]) { flex: 1; }
+.todo-item > button { order: 2; }
+
+/* תווית הסטטוס */
+.todo-item::after {
+  content: "BOARDING";
+  order: 1;
+  min-width: 92px;
+  padding: 2px 8px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  border-radius: 3px;
+  animation: pulse 2s ease-in-out infinite;
+}
+.todo-item:has(> input[type="checkbox"]:checked)::after {
+  content: "DEPARTED";
+  color: var(--ink);
+  background: var(--green);
+  border-color: var(--green);
+  animation: flap 0.5s ease-out;
+}
+
+.todo-item > button:first-of-type { --btn-bg: #3a404a; }
+.todo-item > button:last-of-type { --btn-bg: var(--red); --btn-edge: #7a0018; --btn-text: #fff; }
+
+@media (max-width: 640px) {
+  .todo-item { flex-wrap: wrap; }
+  .todo-item > span:nth-of-type(2) { flex-basis: 55%; }
+}

@@ -1,8 +1,15 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { getData } from "../api/api";
+import { UserContext } from "../context/UserContext";
 import useForm from "../hooks/useForm";
 import "../css/Register.css";
+
+// שמות שתפוסים על ידי עמודים ביישום, ולכן אסור לבחור בהם כשם משתמש
+const RESERVED_NAMES = ["login", "register"];                        // ← חדש
+
+// מותר: אותיות באנגלית ובעברית, ספרות, קו תחתון (_), נקודה (.) ומקף (-)
+const VALID_USERNAME = /^[\w.\-א-ת]+$/;                              // ← חדש
 
 function Register() {
   const { values, handleChange } = useForm({
@@ -11,7 +18,14 @@ function Register() {
     verifyPassword: "",
   });
   const [error, setError] = useState("");
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
+
+  // כבר יש משתמש מחובר: עוברים ישר לעמוד היישום שלו
+  // (הבדיקה נמצאת אחרי כל ה-hooks, כי אסור להפעיל hooks אחרי return)
+  if (user) {
+    return <Navigate to={`/${user.username}`} replace />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -23,15 +37,30 @@ function Register() {
       return;
     }
 
-    // בדיקה 2: הסיסמאות זהות
+    // בדיקה 2: שם המשתמש תקין                                         // ← חדש
+    const username = values.username.trim();                          // ← חדש
+
+    if (!VALID_USERNAME.test(username)) {                             // ← חדש
+      setError("Username may contain only letters, digits, _ . -");
+      return;
+    }
+
+    if (RESERVED_NAMES.includes(username.toLowerCase())) {            // ← חדש
+      setError("This username is not available");
+      return;
+    }
+
+    // בדיקה 3: הסיסמאות זהות
     if (values.password !== values.verifyPassword) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-      // בדיקה 3: שם המשתמש פנוי בשרת
-      const users = await getData(`users?username=${values.username}`);
+      // בדיקה 4: שם המשתמש פנוי בשרת
+      // URLSearchParams מקודד תווים מיוחדים (& # + וכו') כדי שהכתובת לא תישבר
+      const params = new URLSearchParams({ username });               // ← שונה: username במקום values.username
+      const users = await getData(`users?${params}`);
 
       if (users.length > 0) {
         setError("Username already exists");
@@ -40,7 +69,7 @@ function Register() {
 
       // הכול תקין: עוברים למסך השני, ומעבירים איתנו את שם המשתמש והסיסמה
       navigate("/register/details", {
-        state: { username: values.username, password: values.password },
+        state: { username, password: values.password },               // ← שונה: username אחרי trim
       });
     } catch (err) {
       setError(err.message);

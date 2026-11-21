@@ -1,0 +1,31 @@
+/* RegisterDetails.css: "שלב 2 מתוך 2", שדות בשתי עמודות (4 שדות ומעלה) */
+#root > div:has(> form > input:nth-of-type(4)) { max-width: 600px; }
+
+#root > div:has(> form > input:nth-of-type(4))::before { content: "Step 2 of 2 · Details"; }
+#root > div:has(> form > input:nth-of-type(4))::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 40px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--accent);
+  animation: fill-bar 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  transform-origin: left center;
+}
+
+#root > div:has(> form > input:nth-of-type(4)) > h2 + p { color: var(--muted); }
+
+#root > div:has(> form > input:nth-of-type(4)) > form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+#root > div:has(> form > input:nth-of-type(4)) > form button[type="submit"] { grid-column: 1 / -1; }
+
+@keyframes fill-bar { from { transform: scaleX(0.5); } }
+
+@media (max-width: 640px) {
+  #root > div:has(> form > input:nth-of-type(4)) > form { grid-template-columns: 1fr; }
+}

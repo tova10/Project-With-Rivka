@@ -1,0 +1,70 @@
+/* Photos.css: קרון רכבת עם גלגלים. כל תמונה היא חלון */
+main > div > a:first-child {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--amber);
+  border: none;
+  border-radius: 6px;
+  transition: transform 0.2s;
+}
+main > div > a:first-child:hover { transform: translateX(-5px); }
+main > div > a:first-child + h2 { display: block; width: fit-content; max-width: 100%; }
+
+.photos-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 26px 22px;
+  margin: 18px 0 36px;
+  padding: 44px 26px 52px;
+  background:
+    linear-gradient(180deg, var(--red) 0 20px, transparent 20px),
+    linear-gradient(0deg, #2a2d33 0 34px, transparent 34px),
+    #e7e7e1;
+  border-radius: 30px 30px 10px 10px;
+  box-shadow: 0 24px 40px -20px #000;
+}
+
+/* גלגלים */
+.photos-grid::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  bottom: -16px;
+  height: 32px;
+  background: radial-gradient(circle, #0a0b0d 0 10px, #6b717b 11px 14px, transparent 15px) 0 0 / 80px 32px repeat-x;
+}
+
+/* Load more = "הקרון הבא" */
+.photos-grid + button {
+  --btn-bg: var(--amber);
+  --btn-text: var(--ink);
+  --btn-edge: #9c6e00;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  font-size: 15px;
+  letter-spacing: 0.25em;
+  border-radius: 10px;
+}
+.photos-grid + button::after {
+  content: "  ➜";
+  display: inline-block;
+  animation: nudge 1s ease-in-out infinite;
+}
+
+@media (max-width: 640px) {
+  .photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    padding: 36px 14px 46px;
+    gap: 18px 14px;
+  }
+}

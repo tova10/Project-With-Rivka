@@ -1,1 +1,139 @@
-/* Home styles */
+/* Home.css: מסגרת המסך – סרגל צד + אזור תוכן, צבע ושם ענק לכל מדור */
+body:has(nav a.active:nth-of-type(1)) { --accent: #ff5b2e; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(2)) { --accent: #36b5ff; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(3)) { --accent: #c4f03a; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(4)) { --accent: #ff5fa2; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(5)) { --accent: #8b6cff; --on-accent: #ffffff; }
+
+#root > div:has(> header + main) {
+  display: grid;
+  grid-template-columns: var(--side) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ===== סרגל הצד ===== */
+header {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 26px 18px 22px;
+  overflow-y: auto;
+  color: var(--paper);
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.5px) 0 0 / 18px 18px,
+    radial-gradient(circle at 30% 108%, var(--accent), transparent 55%),
+    #121212;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  font-size: 0; /* מסתיר את מפרידי ה-| */
+  counter-reset: link;
+}
+
+nav a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 14px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: rgba(242, 239, 232, 0.55);
+  text-decoration: none;
+  border-radius: 14px;
+  counter-increment: link;
+  transition: color 0.2s, background-color 0.3s, transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+nav a::before {
+  content: "0" counter(link);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+nav a::after {
+  content: "→";
+  margin-left: auto;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+nav a:hover { color: var(--paper); transform: translateX(4px); }
+nav a:hover::after { opacity: 1; transform: none; }
+nav a.active { color: var(--on-accent); background: var(--accent); transform: none; }
+nav a.active::after { opacity: 1; transform: none; }
+
+nav button {
+  --b-bg: transparent;
+  --b-fg: rgba(242, 239, 232, 0.75);
+  --b-hover: var(--paper);
+  --b-hover-fg: var(--ink);
+  align-self: flex-start;
+  margin: auto 0 0;
+  border-color: rgba(242, 239, 232, 0.35);
+}
+nav button::before { content: "↩"; }
+
+/* ===== אזור התוכן ===== */
+main {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 44px clamp(22px, 4vw, 64px) 70px;
+}
+
+/* שם המדור – ענק, אנכי, בקצה המסך */
+main::after {
+  content: "";
+  position: fixed;
+  right: -1vw;
+  bottom: 0;
+  z-index: -1;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 18vh;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--soft);
+  pointer-events: none;
+}
+body:has(nav a.active:nth-of-type(1)) main::after { content: "OVERVIEW"; }
+body:has(nav a.active:nth-of-type(2)) main::after { content: "PROFILE"; }
+body:has(nav a.active:nth-of-type(3)) main::after { content: "TODOS"; }
+body:has(nav a.active:nth-of-type(4)) main::after { content: "POSTS"; }
+body:has(nav a.active:nth-of-type(5)) main::after { content: "ALBUMS"; }
+
+/* מעבר עמוד: התוכן "נחשף" מימין */
+main > div:not(.modal-overlay):not(:has(.post-item)) {
+  animation: wipe 0.6s cubic-bezier(0.7, 0, 0.2, 1) backwards;
+}
+main > div:has(.post-item) { animation: fade-in 0.4s backwards; }
+
+@media (max-width: 900px) {
+  #root > div:has(> header + main) { grid-template-columns: 1fr; }
+  header {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+  }
+  nav { flex-direction: row; flex: 1 1 100%; overflow-x: auto; }
+  nav a { padding: 8px 12px; font-size: 16px; white-space: nowrap; }
+  nav a::after { display: none; }
+  nav button { align-self: center; margin: 0 0 0 auto; }
+  main { min-height: auto; padding: 26px 16px 50px; }
+  main::after { display: none; }
+}

@@ -1,0 +1,107 @@
+/* Home.css: ניווט ממוספר עם לשונית פעילה, דף לבן, מספר מדור ענק ברקע */
+header { margin-bottom: 30px; animation: rise 0.5s backwards; }
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  font-size: 0; /* מסתיר את מפרידי ה-| */
+  border-bottom: 1px solid var(--line);
+  counter-reset: tab;
+}
+
+nav a {
+  position: relative;
+  padding: 12px 16px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  counter-increment: tab;
+  transition: color 0.2s;
+}
+nav a::before {
+  content: "0" counter(tab);
+  margin-right: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  vertical-align: 2px;
+}
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+nav a:hover { color: var(--ink); }
+nav a.active { color: var(--ink); }
+nav a.active::after { transform: scaleX(1); }
+nav a.active::before { color: var(--accent); }
+
+nav button {
+  --b-bg: transparent;
+  --b-fg: var(--muted);
+  --b-hover: transparent;
+  --b-hover-fg: var(--accent);
+  margin: 0 0 0 auto;
+  font-size: 14px;
+}
+nav button::after { content: "→"; transition: transform 0.2s; }
+nav button:hover::after { transform: translateX(4px); }
+
+main {
+  position: relative;
+  isolation: isolate;
+  min-height: 260px;
+  padding: 40px 44px 48px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* מספר המדור הפעיל – ענק וחלול בפינה */
+main::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: 34px;
+  z-index: -1;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 170px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+  pointer-events: none;
+}
+body:has(nav a.active:nth-of-type(1)) main::before { content: "01"; }
+body:has(nav a.active:nth-of-type(2)) main::before { content: "02"; }
+body:has(nav a.active:nth-of-type(3)) main::before { content: "03"; }
+body:has(nav a.active:nth-of-type(4)) main::before { content: "04"; }
+
+main:empty::after {
+  content: "Choose a section above to begin.";
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 28px;
+  color: var(--muted);
+}
+
+main > div:not(.modal-overlay) { animation: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+
+@media (max-width: 640px) {
+  nav a { padding: 10px 10px 12px; font-size: 14px; }
+  nav a::before { display: none; }
+  main { padding: 26px 18px 30px; border-radius: 18px; }
+  main::before { font-size: 100px; right: 14px; }
+}

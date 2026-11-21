@@ -1,0 +1,79 @@
+/* AlbumItem.css: אלבום = ערימת דפים שנפתחת בריחוף. כל הכרטיס לחיץ */
+.album-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 170px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow:
+    5px 5px 0 -1px var(--surface), 5px 5px 0 0 var(--line),
+    10px 10px 0 -1px var(--surface), 10px 10px 0 0 var(--line);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: rise 0.45s backwards;
+}
+.album-item:hover {
+  transform: translate(-3px, -3px);
+  box-shadow:
+    9px 9px 0 -1px var(--surface), 9px 9px 0 0 var(--line),
+    18px 18px 0 -1px var(--surface), 18px 18px 0 0 var(--line);
+}
+
+/* חץ בפינה */
+.album-item::after {
+  content: "↗";
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  color: var(--muted);
+  transition: transform 0.3s, color 0.2s;
+}
+.album-item:hover::after { color: var(--accent); transform: translate(2px, -2px); }
+
+.album-item > span:first-child {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.album-item > span:first-child::before { content: "Album "; }
+
+.album-item > a {
+  font-family: var(--font-serif);
+  font-size: 23px;
+  line-height: 1.15;
+  color: var(--ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.album-item:hover > a { color: var(--accent); }
+
+/* הקישור נמתח על כל הכרטיס */
+.album-item > a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.album-item > button {
+  --b-bg: transparent;
+  --b-fg: var(--danger);
+  --b-hover: var(--danger-soft);
+  --b-hover-fg: var(--danger);
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  margin: 0 0 0 -10px;
+  opacity: 0;
+}
+.album-item:hover > button,
+.album-item > button:focus-visible { opacity: 1; }
+
+@media (hover: none) {
+  .album-item > button { opacity: 1; }
+}

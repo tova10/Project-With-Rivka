@@ -1,0 +1,165 @@
+
+/* =====================================================================
+   Info.css: הפרטים האישיים – "כרטיס קורא" שנשלף על-גבי העמוד,
+   עם חור ניקוב, שורות מוקלדות וחותמת אישור
+   ===================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(10, 22, 17, 0.55);
+  -webkit-backdrop-filter: blur(5px) sepia(0.3);
+  backdrop-filter: blur(5px) sepia(0.3);
+  animation: overlay-in 0.3s ease-out backwards;
+}
+
+.modal {
+  position: relative;
+  width: min(480px, 100%);
+  min-width: 0;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  padding: 58px 34px 30px;
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, transparent 0 40px, var(--ink-blue) 40px 43px, transparent 43px),
+    var(--grain),
+    linear-gradient(180deg, #fffdf6, var(--paper));
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.08);
+  transform: rotate(-1deg);
+  animation: info-card-in 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.2) backwards;
+}
+
+/* כותרת הכרטיס בפינה העליונה */
+.modal::before {
+  content: "READER'S CARD · CATALOGUE";
+  position: absolute;
+  top: 13px;
+  left: 34px;
+  font-family: var(--font-type);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--ink-blue);
+}
+
+/* חותמת אישור עגולה */
+.modal::after {
+  content: "VERIFIED ✦ READER ✦";
+  position: absolute;
+  top: 58px;
+  right: 22px;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  padding: 12px;
+  font-family: var(--font-type);
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: var(--stamp-red);
+  border: 3px double var(--stamp-red);
+  border-radius: 50%;
+  opacity: 0.75;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  --stamp-rot: 16deg;
+  animation: stamp-in 0.45s 0.55s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.modal th,
+.modal td {
+  padding: 8px 6px 6px;
+  text-align: left;
+  vertical-align: bottom;
+  border-bottom: 1px dashed rgba(35, 64, 122, 0.35);
+}
+
+.modal th {
+  width: 120px;
+  font-family: var(--font-type);
+  font-weight: normal;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* הערכים "מוקלדים" אחד אחרי השני */
+.modal td {
+  font-size: 15px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  animation: type-in 0.4s steps(6) backwards;
+}
+
+.modal tr:nth-child(1) td { animation-delay: 0.25s; }
+.modal tr:nth-child(2) td { animation-delay: 0.32s; }
+.modal tr:nth-child(3) td { animation-delay: 0.39s; }
+.modal tr:nth-child(4) td { animation-delay: 0.46s; }
+.modal tr:nth-child(5) td { animation-delay: 0.53s; }
+.modal tr:nth-child(6) td { animation-delay: 0.6s; }
+.modal tr:nth-child(7) td { animation-delay: 0.67s; }
+.modal tr:nth-child(8) td { animation-delay: 0.74s; }
+
+.modal tr:hover td {
+  background: var(--highlight);
+}
+
+.modal > button {
+  float: right;
+  margin: 0;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes info-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(70px) rotate(5deg) scale(0.9);
+  }
+}
+
+@keyframes type-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal {
+    padding: 54px 18px 24px;
+  }
+  .modal::after {
+    width: 72px;
+    height: 72px;
+    font-size: 9px;
+    right: 10px;
+  }
+  .modal th {
+    width: 90px;
+  }
+}

@@ -1,1 +1,30 @@
-/* RegisterDetails styles */
+/* RegisterDetails.css: "Step 2 / 2", שדות בשתי עמודות (4 שדות ומעלה) */
+#root > div:has(> form > input:nth-of-type(4)) {
+  --art-a: #8b6cff;
+  --art-b: #c4f03a;
+  --art-bg: #ff5fa2;
+  --hello: "Almost.";
+}
+#root > div:has(> form > input:nth-of-type(4)) > * { max-width: 620px; }
+#root > div:has(> form > input:nth-of-type(4)) > h2::before {
+  content: "Step 2 / 2";
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+#root > div:has(> form > input:nth-of-type(4)) > h2 + p { color: var(--muted); }
+#root > div:has(> form > input:nth-of-type(4)) > form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+#root > div:has(> form > input:nth-of-type(4)) > form button[type="submit"] { grid-column: 1 / -1; }
+
+@media (max-width: 800px) {
+  #root > div:has(> form > input:nth-of-type(4)) > form { grid-template-columns: 1fr; }
+}
