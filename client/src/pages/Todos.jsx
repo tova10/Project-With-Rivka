@@ -32,12 +32,16 @@ function Todos() {
     useResource("todos", `?userId=${user?.id}`);
 
   // החיפוש והמיון נשמרים בכתובת (נשארים אחרי ריענון)
-  const [search, setSearch] = useUrlSearch("title");
+  const [search, setSearch] = useUrlSearch(
+    "title",
+    SEARCH_FIELDS.map((field) => field.value)
+  );
   const [sortBy, setSortBy] = useUrlState(
     "sort",
     "id",
     SORT_OPTIONS.map((option) => option.value)
   );
+
   // מה מוצג: קודם מסננים, אחר כך ממיינים
   const visibleTodos = sortItems(filterItems(todos, search), sortBy);
 

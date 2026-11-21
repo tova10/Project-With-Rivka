@@ -38,7 +38,9 @@ function Login() {
         return;
       }
 
-      const { password, ...userWithoutPassword } = users[0];
+      const userWithoutPassword = { ...users[0] };
+      delete userWithoutPassword.password;
+
       login(userWithoutPassword);
       navigate(`/${userWithoutPassword.username}`);
     } catch (err) {
