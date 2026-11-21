@@ -40,7 +40,6 @@ function Login() {
 
       const userWithoutPassword = { ...users[0] };
       delete userWithoutPassword.password;
-
       login(userWithoutPassword);
       navigate(`/${userWithoutPassword.username}`);
     } catch (err) {
@@ -56,6 +55,7 @@ function Login() {
         <input
           name="username"
           placeholder="Username"
+          aria-label="Username"
           value={values.username}
           onChange={handleChange}
         />
@@ -63,6 +63,7 @@ function Login() {
           name="password"
           type="password"
           placeholder="Password"
+          aria-label="Password"
           value={values.password}
           onChange={handleChange}
         />

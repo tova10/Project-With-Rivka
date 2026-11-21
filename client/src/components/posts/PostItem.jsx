@@ -1,7 +1,6 @@
 import { useState } from "react";
 import useForm from "../../hooks/useForm";
 import Comments from "./Comments";
-import ReadingTime from "../fx/ReadingTime";
 import "../../css/PostItem.css";
 
 // post       = הפוסט להצגה
@@ -36,6 +35,13 @@ function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
     setIsEditing(false);
   }
 
+  // מחיקת פוסט מוחקת בשרת גם את כל התגובות שלו
+  function handleDelete() {
+    if (window.confirm(`Delete post "${post.title}" and all its comments?`)) {
+      onDelete(post.id);
+    }
+  }
+
   function handleCancel() {
     reset();
     setIsEditing(false);
@@ -60,19 +66,18 @@ function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
         <div className="post-details">
           {isEditing ? (
             <>
-              <input name="title" value={values.title} onChange={handleChange} />
-              <textarea name="body" value={values.body} onChange={handleChange} />
+              <input aria-label="Post title" name="title" value={values.title} onChange={handleChange} />
+              <textarea aria-label="Post content" name="body" value={values.body} onChange={handleChange} />
               <button onClick={handleSave}>Save</button>
               <button onClick={handleCancel}>Cancel</button>
             </>
           ) : (
             <>
-              <ReadingTime text={post.body} />
               <p>{post.body}</p>
               {isOwner && (
                 <>
                   <button onClick={() => setIsEditing(true)}>Edit</button>
-                  <button onClick={() => onDelete(post.id)}>Delete</button>
+                  <button onClick={handleDelete}>Delete</button>
                 </>
               )}
               <button onClick={() => setShowComments(!showComments)}>

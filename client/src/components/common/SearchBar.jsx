@@ -1,3 +1,4 @@
+
 import "../../css/SearchBar.css";
 
 // fields   = על אילו שדות אפשר לחפש: [{ value: "id", label: "ID" }, ...]

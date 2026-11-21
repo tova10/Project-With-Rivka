@@ -117,6 +117,7 @@ function RegisterDetails() {
             key={field.name}
             name={field.name}
             placeholder={field.placeholder}
+            aria-label={field.placeholder}
             value={values[field.name]}
             onChange={handleChange}
           />

@@ -6,7 +6,6 @@ import { filterItems, sortItems } from "../utils/listUtils";
 import AddForm from "../components/common/AddForm";
 import SearchBar from "../components/common/SearchBar";
 import TodoItem from "../components/todos/TodoItem";
-import TodoProgress from "../components/fx/TodoProgress";
 import "../css/Todos.css";
 
 // השדות בטופס ההוספה
@@ -41,7 +40,6 @@ function Todos() {
     "id",
     SORT_OPTIONS.map((option) => option.value)
   );
-
   // מה מוצג: קודם מסננים, אחר כך ממיינים
   const visibleTodos = sortItems(filterItems(todos, search), sortBy);
 
@@ -56,7 +54,6 @@ function Todos() {
     <div>
       <h2>Todos</h2>
 
-      <TodoProgress todos={todos} />
 
       {error && <p>Error: {error}</p>}
 
@@ -65,8 +62,8 @@ function Todos() {
       <SearchBar fields={SEARCH_FIELDS} search={search} onChange={setSearch} />
 
       <div>
-        <label>Sort by: </label>
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <label htmlFor="sort-by">Sort by: </label>
+        <select id="sort-by" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           {SORT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

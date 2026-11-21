@@ -30,6 +30,12 @@ function PhotoItem({ photo, onUpdate, onDelete }) {
     setIsEditing(false);
   }
 
+  function handleDelete() {
+    if (window.confirm(`Delete photo "${photo.title}"?`)) {
+      onDelete(photo.id);
+    }
+  }
+
   function handleCancel() {
     reset();
     setIsEditing(false);
@@ -41,8 +47,8 @@ function PhotoItem({ photo, onUpdate, onDelete }) {
 
       {isEditing ? (
         <>
-          <input name="title" value={values.title} onChange={handleChange} />
-          <input name="url" value={values.url} onChange={handleChange} />
+          <input aria-label="Photo title" name="title" value={values.title} onChange={handleChange} />
+          <input aria-label="Image URL" name="url" value={values.url} onChange={handleChange} />
           <button onClick={handleSave}>Save</button>
           <button onClick={handleCancel}>Cancel</button>
         </>
@@ -52,7 +58,7 @@ function PhotoItem({ photo, onUpdate, onDelete }) {
             #{photo.id} {photo.title}
           </p>
           <button onClick={() => setIsEditing(true)}>Edit</button>
-          <button onClick={() => onDelete(photo.id)}>Delete</button>
+          <button onClick={handleDelete}>Delete</button>
         </>
       )}
     </div>

@@ -84,6 +84,7 @@ function Register() {
         <input
           name="username"
           placeholder="Username"
+          aria-label="Username"
           value={values.username}
           onChange={handleChange}
         />
@@ -91,6 +92,7 @@ function Register() {
           name="password"
           type="password"
           placeholder="Password"
+          aria-label="Password"
           value={values.password}
           onChange={handleChange}
         />
@@ -98,6 +100,7 @@ function Register() {
           name="verifyPassword"
           type="password"
           placeholder="Verify password"
+          aria-label="Verify password"
           value={values.verifyPassword}
           onChange={handleChange}
         />

@@ -18,6 +18,12 @@ function TodoItem({ todo, onUpdate, onDelete }) {
     setIsEditing(false);
   }
 
+  function handleDelete() {
+    if (window.confirm(`Delete todo "${todo.title}"?`)) {
+      onDelete(todo.id);
+    }
+  }
+
   function handleCancel() {
     setNewTitle(todo.title);
     setIsEditing(false);
@@ -27,11 +33,20 @@ function TodoItem({ todo, onUpdate, onDelete }) {
     <li className="todo-item">
       <span>#{todo.id} </span>
 
-      <input type="checkbox" checked={todo.completed} onChange={handleToggle} />
+      <input
+        type="checkbox"
+        aria-label="Done"
+        checked={todo.completed}
+        onChange={handleToggle}
+      />
 
       {isEditing ? (
         <>
-          <input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+          <input
+            aria-label="Todo title"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+          />
           <button onClick={handleSave}>Save</button>
           <button onClick={handleCancel}>Cancel</button>
         </>
@@ -39,7 +54,7 @@ function TodoItem({ todo, onUpdate, onDelete }) {
         <>
           <span> {todo.title} </span>
           <button onClick={() => setIsEditing(true)}>Edit</button>
-          <button onClick={() => onDelete(todo.id)}>Delete</button>
+          <button onClick={handleDelete}>Delete</button>
         </>
       )}
     </li>

@@ -18,6 +18,12 @@ function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
     setIsEditing(false);
   }
 
+  function handleDelete() {
+    if (window.confirm("Delete this comment?")) {
+      onDelete(comment.id);
+    }
+  }
+
   function handleCancel() {
     reset();
     setIsEditing(false);
@@ -27,8 +33,8 @@ function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
     <li className="comment-item">
       {isEditing ? (
         <>
-          <input name="name" value={values.name} onChange={handleChange} />
-          <textarea name="body" value={values.body} onChange={handleChange} />
+          <input aria-label="Comment title" name="name" value={values.name} onChange={handleChange} />
+          <textarea aria-label="Comment text" name="body" value={values.body} onChange={handleChange} />
           <button onClick={handleSave}>Save</button>
           <button onClick={handleCancel}>Cancel</button>
         </>
@@ -41,7 +47,7 @@ function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
           {isOwner && (
             <>
               <button onClick={() => setIsEditing(true)}>Edit</button>
-              <button onClick={() => onDelete(comment.id)}>Delete</button>
+              <button onClick={handleDelete}>Delete</button>
             </>
           )}
         </>

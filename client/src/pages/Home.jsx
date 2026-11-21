@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import Greeting from "../components/fx/Greeting";
 import { UserContext } from "../context/UserContext";
 import "../css/Home.css";
 
@@ -16,7 +15,7 @@ function Home() {
   return (
     <div>
       <header>
-        <Greeting name={user?.name} />
+        <h2>Welcome, {user.username}</h2>
 
         <nav>
           <NavLink to="info">Info</NavLink> |{" "}
