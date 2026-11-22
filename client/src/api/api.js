@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 // כתובת השרת: נלקחת ממשתנה הסביבה VITE_API_URL (בקובץ .env), ואם אין - ברירת מחדל
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 

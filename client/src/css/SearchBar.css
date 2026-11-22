@@ -22,15 +22,25 @@
 
 .search-bar + p,
 .search-bar + div:has(> select) + p {
-  justify-self: start;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin: 4px 0 18px;
-  padding: 3px 12px;
+  padding: 0;
   font-family: var(--font-mono);
-  font-size: 12px;
-  background: var(--card);
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: none;
+  border: none;
+}
+.search-bar + p::before,
+.search-bar + div:has(> select) + p::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 @media (max-width: 700px) {

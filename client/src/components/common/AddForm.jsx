@@ -1,4 +1,4 @@
-import useForm from "../../hooks/useForm";
+import useFormFields from "../../hooks/useFormFields";
 
 // fields     = השדות בטופס:
 //              שדה טקסט:    { name: "title", placeholder: "Title" }
@@ -12,7 +12,7 @@ function AddForm({ fields, onAdd, buttonText = "Add" }) {
     initialValues[field.name] = field.type === "checkbox" ? false : "";
   });
 
-  const { values, handleChange, reset } = useForm(initialValues);
+  const { values, handleChange, reset } = useFormFields(initialValues);
 
   function handleSubmit(e) {
     e.preventDefault();

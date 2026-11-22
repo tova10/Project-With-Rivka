@@ -1,7 +1,0 @@
-/* Register.css: לוחית ירוקה "NEW PASS" (טופס עם 3 שדות בדיוק) */
-#root > div:has(> form > input:nth-of-type(3)):not(:has(> form > input:nth-of-type(4))) {
-  --plate: var(--green);
-}
-#root > div:has(> form > input:nth-of-type(3)):not(:has(> form > input:nth-of-type(4)))::before {
-  content: "NEW PASS · 02";
-}

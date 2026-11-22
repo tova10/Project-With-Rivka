@@ -1,15 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import RegisterDetails from "./pages/RegisterDetails";
-import Home from "./pages/Home";
-import Info from "./pages/Info";
-import Todos from "./pages/Todos";
-import Posts from "./pages/Posts";
-import Albums from "./pages/Albums";
-import Photos from "./pages/Photos";
-import NotFound from "./pages/NotFound";
+import Login from "./components/pages/Login/Login";
+import Register from "./components/pages/Register/Register";
+import RegisterDetails from "./components/pages/RegisterDetails/RegisterDetails";
+import Home from "./components/pages/Home/Home";
+import Info from "./components/pages/Info/Info";
+import Todos from "./components/pages/Todos/Todos";
+import Posts from "./components/pages/Posts/Posts";
+import Albums from "./components/pages/Albums/Albums";
+import Photos from "./components/pages/Photos/Photos";
+import NotFound from "./components/pages/NotFound/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {

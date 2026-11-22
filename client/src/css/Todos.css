@@ -1,14 +1,14 @@
 /* Todos.css: סרגל כלים בשורה אחת + לוח קנבן (פתוחות / בוצעו) */
 main > div:has(> .todo-progress) {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  column-gap: 14px;
+  column-gap: 16px;
 }
-main > div:has(> .todo-progress) > * { grid-column: 1 / -1; }
-main > div:has(> .todo-progress) > form,
+main > div:has(> .todo-progress) > * { flex: 1 1 100%; min-width: 0; }
 main > div:has(> .todo-progress) > .search-bar,
-main > div:has(> .todo-progress) > .search-bar + div { grid-column: auto; }
+main > div:has(> .todo-progress) > .search-bar + div,
+main > div:has(> .todo-progress) > .search-bar + div + p { flex: 0 0 auto; margin-top: 12px; margin-bottom: 12px; }
 
 /* המיון */
 .search-bar + div:has(> select) {

@@ -1,7 +1,0 @@
-/* Albums.css: רשת תוויות מזוודה */
-ul:has(> .album-item) {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 26px 20px;
-  padding: 10px 2px;
-}

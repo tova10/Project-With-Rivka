@@ -1,7 +1,0 @@
-/* Albums.css: רשת כרטיסים */
-ul:has(> .album-item) {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 30px 26px;
-  padding: 8px 12px 12px 0;
-}
