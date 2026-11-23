@@ -3,9 +3,6 @@ import useFormFields from "../../../hooks/useFormFields";
 import Comments from "./Comments";
 import "../../../css/PostItem.css";
 
-// פוסט אחד ברשימה.
-// סגור: רק מזהה וכותרת. נבחר: מודגש, עם התוכן, כפתורים והתגובות.
-// isOwner = הפוסט של המשתמש המחובר (רק אז אפשר לערוך ולמחוק)
 function PostItem({ post, isSelected, isOwner, onSelect, onClose, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -22,7 +19,6 @@ function PostItem({ post, isSelected, isOwner, onSelect, onClose, onUpdate, onDe
     setIsEditing(false);
   }
 
-  // מחיקת פוסט מוחקת בשרת גם את התגובות שלו
   function handleDelete() {
     if (window.confirm(`Delete post "${post.title}" and its comments?`)) {
       onDelete(post.id);

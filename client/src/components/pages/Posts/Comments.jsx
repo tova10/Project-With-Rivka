@@ -10,13 +10,11 @@ const ADD_FIELDS = [
   { name: "body", placeholder: "Write a comment..." },
 ];
 
-// התגובות של פוסט אחד
 function Comments({ postId }) {
   const { user } = useContext(UserContext);
   const { items: comments, loading, error, addItem, updateItem, removeItem } =
     useResource("comments", `?postId=${postId}`);
 
-  // כמו בשרת: כל תגובה מזוהה לפי המייל של מי שכתב אותה
   function handleAdd(values) {
     addItem({ postId, name: values.name, email: user.email, body: values.body });
   }

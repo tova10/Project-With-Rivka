@@ -9,7 +9,6 @@ import SortSelect from "../../common/SortSelect";
 import PostItem from "./PostItem";
 import "../../../css/Posts.css";
 
-// לפי מה אפשר לחפש ולמיין
 const FIELDS = [
   { value: "id", label: "ID" },
   { value: "title", label: "Title" },
@@ -20,18 +19,16 @@ const ADD_FIELDS = [
   { name: "body", placeholder: "Content" },
 ];
 
-// הפוסטים: /Bret/posts (שלי) או /Bret/posts?all=true (של כולם)
 function Posts() {
+
   const { user } = useContext(UserContext);
 
-  // נשמר בכתובת: חיפוש, מיון, הכול/שלי, והפוסט הפתוח (?post=5)
   const [params, setParams] = useUrlParams({ by: "title", q: "", sort: "id", all: "", post: "" });
   const showAll = params.all === "true";
 
   const { items: posts, loading, error, addItem, updateItem, removeItem } =
     useResource("posts", showAll ? "" : `?userId=${user.id}`);
 
-  // הרשימה המוצגת: קודם חיפוש, אחר כך מיון (useMemo - רק כשמשהו משתנה)
   const visiblePosts = useMemo(
     () => sortItems(filterItems(posts, params.by, params.q), params.sort),
     [posts, params.by, params.q, params.sort]

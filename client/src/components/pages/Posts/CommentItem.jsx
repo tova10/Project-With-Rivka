@@ -1,7 +1,6 @@
 import { useState } from "react";
 import useFormFields from "../../../hooks/useFormFields";
 
-// תגובה אחת. isOwner = התגובה של המשתמש המחובר (רק אז אפשר לערוך ולמחוק)
 function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const { values, handleChange, reset } = useFormFields({ name: comment.name, body: comment.body });

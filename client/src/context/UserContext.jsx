@@ -5,7 +5,6 @@ export const UserContext = createContext(null);
 
 const USER_KEY = "currentUser";
 
-// המשתמש המחובר. נשמר ב-Local Storage, כדי שיישאר מחובר גם אחרי ריענון
 function UserProvider({ children }) {
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem(USER_KEY)));
   const { setCache } = useContext(CacheContext);
@@ -15,7 +14,6 @@ function UserProvider({ children }) {
     setUser(userData);
   }
 
-  // יציאה: מוחקים את המשתמש מה-LS, ואת המידע שלו מה-Cache
   function logout() {
     localStorage.removeItem(USER_KEY);
     setCache({});
