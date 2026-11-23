@@ -16,7 +16,7 @@ function Comments({ postId }) {
     useResource("comments", `?postId=${postId}`);
 
   function handleAdd(values) {
-    addItem({ postId, name: values.name, email: user.email, body: values.body });
+    addItem({ postId, userId: user.id, name: values.name, email: user.email, body: values.body });
   }
 
   if (loading) return <p>Loading comments...</p>;
@@ -32,7 +32,7 @@ function Comments({ postId }) {
           <CommentItem
             key={comment.id}
             comment={comment}
-            isOwner={comment.email === user.email}
+            isOwner={comment.id === user.id}
             onUpdate={updateItem}
             onDelete={removeItem}
           />
