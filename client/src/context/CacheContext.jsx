@@ -9,7 +9,6 @@ function CacheProvider({ children }) {
     setCache((prev) => ({ ...prev, [key]: newList }));
   }, []);
 
-
   const changeList = useCallback((resource, key, change) => {
     setCache((prev) => {
       const next = {};

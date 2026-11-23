@@ -7,7 +7,7 @@ const USER_KEY = "currentUser";
 
 function UserProvider({ children }) {
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem(USER_KEY)));
-  const { setCache } = useContext(CacheContext);
+  const { clearCache } = useContext(CacheContext);
 
   function login(userData) {
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
@@ -16,7 +16,7 @@ function UserProvider({ children }) {
 
   function logout() {
     localStorage.removeItem(USER_KEY);
-    setCache({});
+    clearCache();
     setUser(null);
   }
 
