@@ -4,7 +4,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  margin: 12px 0;
+  margin: 12px 12px 12px 0;
   padding: 5px 8px 5px 16px;
   background: var(--card);
   border: 1.5px solid var(--ink);
@@ -16,12 +16,11 @@
 .search-bar label { margin: 0; }
 .search-bar select,
 .search-bar input { background-color: transparent; border: none; }
-.search-bar input { min-width: 200px; }
+.search-bar input { width: 200px; }
 .search-bar input:focus,
 .search-bar select:focus { box-shadow: none; transform: none; }
 
-.search-bar + p,
-.search-bar + div:has(> select) + p {
+.list-count {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -34,8 +33,7 @@
   background: none;
   border: none;
 }
-.search-bar + p::before,
-.search-bar + div:has(> select) + p::before {
+.list-count::before {
   content: "";
   width: 8px;
   height: 8px;

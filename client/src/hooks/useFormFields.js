@@ -1,18 +1,15 @@
 import { useState } from "react";
 
-// Hook גנרי לכל טופס
-// initialValues = הערכים ההתחלתיים של השדות
+// Hook לטופס: שומר את ערכי השדות לפי ה-name שלהם
+// initialValues = הערכים ההתחלתיים, למשל { username: "", password: "" }
 function useFormFields(initialValues) {
   const [values, setValues] = useState(initialValues);
 
-  // מעדכן כל שדה לפי ה-name שלו
-  // בתיבת סימון (checkbox) הערך הוא checked (true/false), בשאר השדות value
   function handleChange(e) {
-    const { name, type, value, checked } = e.target;
-    setValues({ ...values, [name]: type === "checkbox" ? checked : value });
+    setValues({ ...values, [e.target.name]: e.target.value });
   }
 
-  // מחזיר את הטופס למצב ההתחלתי
+  // החזרת הטופס לערכים ההתחלתיים
   function reset() {
     setValues(initialValues);
   }

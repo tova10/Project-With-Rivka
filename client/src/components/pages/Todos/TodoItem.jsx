@@ -1,20 +1,19 @@
 import { useState } from "react";
 import "../../../css/TodoItem.css";
 
-// todo     = המשימה להצגה
-// onUpdate = עדכון (מקבל id ושינויים)
-// onDelete = מחיקה (מקבל id)
+// משימה אחת: מזהה, checkbox של ביצוע, כותרת, עריכה ומחיקה
 function TodoItem({ todo, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [newTitle, setNewTitle] = useState(todo.title);
-
-  function handleToggle() {
-    onUpdate(todo.id, { completed: !todo.completed });
-  }
+  const [title, setTitle] = useState(todo.title);
 
   function handleSave() {
-    if (!newTitle.trim()) return;
-    onUpdate(todo.id, { title: newTitle });
+    if (!title.trim()) return;
+    onUpdate(todo.id, { title });
+    setIsEditing(false);
+  }
+
+  function handleCancel() {
+    setTitle(todo.title);
     setIsEditing(false);
   }
 
@@ -24,35 +23,26 @@ function TodoItem({ todo, onUpdate, onDelete }) {
     }
   }
 
-  function handleCancel() {
-    setNewTitle(todo.title);
-    setIsEditing(false);
-  }
-
   return (
     <li className="todo-item">
-      <span>#{todo.id} </span>
+      <span>#{todo.id}</span>
 
       <input
         type="checkbox"
         aria-label="Done"
         checked={todo.completed}
-        onChange={handleToggle}
+        onChange={() => onUpdate(todo.id, { completed: !todo.completed })}
       />
 
       {isEditing ? (
         <>
-          <input
-            aria-label="Todo title"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-          />
+          <input aria-label="Todo title" value={title} onChange={(e) => setTitle(e.target.value)} />
           <button onClick={handleSave}>Save</button>
           <button onClick={handleCancel}>Cancel</button>
         </>
       ) : (
         <>
-          <span> {todo.title} </span>
+          <span>{todo.title}</span>
           <button onClick={() => setIsEditing(true)}>Edit</button>
           <button onClick={handleDelete}>Delete</button>
         </>

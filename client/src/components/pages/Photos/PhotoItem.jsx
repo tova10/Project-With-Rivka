@@ -2,31 +2,19 @@ import { useState } from "react";
 import useFormFields from "../../../hooks/useFormFields";
 import "../../../css/PhotoItem.css";
 
-// photo    = התמונה להצגה
-// onUpdate = עדכון (מקבל id ושינויים)
-// onDelete = מחיקה (מקבל id)
 function PhotoItem({ photo, onUpdate, onDelete }) {
+  
   const [isEditing, setIsEditing] = useState(false);
-  const { values, handleChange, reset } = useFormFields({
-    title: photo.title,
-    url: photo.url,
-  });
-
-  // תמונה חלופית, אם הקישור המקורי לא עובד
-  const fallbackUrl = "https://placehold.co/150x150/eeeeee/999999.png?text=No+image";
-  function handleImageError(e) {
-    if (e.target.src !== fallbackUrl) {
-      e.target.src = fallbackUrl;
-    }
-  }
+  const { values, handleChange, reset } = useFormFields({ title: photo.title, url: photo.url });
 
   function handleSave() {
     if (!values.title.trim() || !values.url.trim()) return;
-    onUpdate(photo.id, {
-      title: values.title,
-      url: values.url,
-      thumbnailUrl: values.url,
-    });
+    onUpdate(photo.id, { title: values.title, url: values.url, thumbnailUrl: values.url });
+    setIsEditing(false);
+  }
+
+  function handleCancel() {
+    reset();
     setIsEditing(false);
   }
 
@@ -36,14 +24,9 @@ function PhotoItem({ photo, onUpdate, onDelete }) {
     }
   }
 
-  function handleCancel() {
-    reset();
-    setIsEditing(false);
-  }
-
   return (
     <div className="photo-item">
-      <img src={photo.thumbnailUrl} alt={photo.title} onError={handleImageError} />
+      <img src={photo.url} alt={photo.title} />
 
       {isEditing ? (
         <>

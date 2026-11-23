@@ -1,49 +1,39 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { UserContext } from "../../../context/UserContext";
 import useResource from "../../../hooks/useResource";
-import { useUrlState, useUrlSearch } from "../../../hooks/useUrlState";
+import useUrlParams from "../../../hooks/useUrlParams";
 import { filterItems, sortItems } from "../../../utils/listUtils";
 import AddForm from "../../common/AddForm";
 import SearchBar from "../../common/SearchBar";
+import SortSelect from "../../common/SortSelect";
 import TodoItem from "./TodoItem";
 import "../../../css/Todos.css";
 
-// השדות בטופס ההוספה
+// לפי מה אפשר לחפש ולמיין
+const FIELDS = [
+  { value: "id", label: "ID" },
+  { value: "title", label: "Title" },
+  { value: "completed", label: "Status" },
+];
+
 const ADD_FIELDS = [{ name: "title", placeholder: "New todo..." }];
 
-// על מה אפשר לחפש
-const SEARCH_FIELDS = [
-  { value: "id", label: "ID" },
-  { value: "title", label: "Title" },
-  { value: "completed", label: "Status" },
-];
-
-// לפי מה אפשר למיין
-const SORT_OPTIONS = [
-  { value: "id", label: "ID" },
-  { value: "title", label: "Title" },
-  { value: "completed", label: "Status" },
-];
-
+// המשימות של המשתמש: /Bret/todos
 function Todos() {
   const { user } = useContext(UserContext);
   const { items: todos, loading, error, addItem, updateItem, removeItem } =
-    useResource("todos", `?userId=${user?.id}`);
+    useResource("todos", `?userId=${user.id}`);
 
-  // החיפוש והמיון נשמרים בכתובת (נשארים אחרי ריענון)
-  const [search, setSearch] = useUrlSearch(
-    "title",
-    SEARCH_FIELDS.map((field) => field.value)
-  );
-  const [sortBy, setSortBy] = useUrlState(
-    "sort",
-    "id",
-    SORT_OPTIONS.map((option) => option.value)
-  );
-  // מה מוצג: קודם מסננים, אחר כך ממיינים
-  const visibleTodos = sortItems(filterItems(todos, search), sortBy);
+  // החיפוש והמיון נשמרים בכתובת: ?by=title&q=abc&sort=title
+  const [params, setParams] = useUrlParams({ by: "title", q: "", sort: "id" });
 
-  // משלימים משימה חדשה: userId של המחובר, ו-completed: false
+  // הרשימה המוצגת: קודם חיפוש, אחר כך מיון.
+  // useMemo - מחושבת מחדש רק כשמשהו מהם משתנה
+  const visibleTodos = useMemo(
+    () => sortItems(filterItems(todos, params.by, params.q), params.sort),
+    [todos, params.by, params.q, params.sort]
+  );
+
   function handleAdd(values) {
     addItem({ userId: user.id, title: values.title, completed: false });
   }
@@ -54,34 +44,29 @@ function Todos() {
     <div>
       <h2>Todos</h2>
 
-
       {error && <p>Error: {error}</p>}
 
       <AddForm fields={ADD_FIELDS} onAdd={handleAdd} />
 
-      <SearchBar fields={SEARCH_FIELDS} search={search} onChange={setSearch} />
+      <SearchBar
+        fields={FIELDS}
+        field={params.by}
+        text={params.q}
+        onChange={(by, q) => setParams({ by, q })}
+      />
+      <SortSelect
+        options={FIELDS}
+        value={params.sort}
+        onChange={(sort) => setParams({ sort })}
+      />
 
-      <div>
-        <label htmlFor="sort-by">Sort by: </label>
-        <select id="sort-by" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          {SORT_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <p>Showing {visibleTodos.length} of {todos.length}</p>
+      <p className="list-count">
+        Showing {visibleTodos.length} of {todos.length}
+      </p>
 
       <ul>
         {visibleTodos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onUpdate={updateItem}
-            onDelete={removeItem}
-          />
+          <TodoItem key={todo.id} todo={todo} onUpdate={updateItem} onDelete={removeItem} />
         ))}
       </ul>
     </div>

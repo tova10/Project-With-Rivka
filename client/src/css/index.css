@@ -7,17 +7,6 @@
   inherits: true;
   initial-value: #ff5b2e;
 }
-/* מספרים שסופרים למעלה */
-@property --p {
-  syntax: "<integer>";
-  inherits: true;
-  initial-value: 0;
-}
-@property --c {
-  syntax: "<integer>";
-  inherits: true;
-  initial-value: 0;
-}
 
 :root {
   --side: 270px;
@@ -51,15 +40,6 @@ body {
 ::selection { background: var(--accent); color: var(--on-accent); }
 
 #root { min-height: 100vh; }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
 
 h1, h2 { font-weight: 800; letter-spacing: -0.03em; line-height: 0.95; }
 h1 { margin: 0; font-size: 26px; }
@@ -250,18 +230,11 @@ main > p:only-child::before {
   to { clip-path: inset(0 0 0 0); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes blink { 50% { opacity: 0; } }
-@keyframes float { 50% { transform: translate(-16px, 14px); } }
-@keyframes morph {
-  50% { border-radius: 60% 40% 30% 70% / 40% 60% 40% 60%; transform: rotate(40deg); }
-}
 @keyframes shake {
   20%, 60% { transform: translateX(-7px); }
   40%, 80% { transform: translateX(7px); }
 }
 @keyframes land { from { opacity: 0; transform: translateY(-14px) rotate(-3deg) scale(1.04); } }
-@keyframes count-up { from { --p: 0; } }
-@keyframes count-stat { from { --c: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

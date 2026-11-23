@@ -6,38 +6,24 @@ import AddForm from "../../common/AddForm";
 import PhotoItem from "./PhotoItem";
 import "../../../css/Photos.css";
 
-// כמה תמונות להביא בכל פעם
 const PAGE_SIZE = 10;
 
-// השדות בטופס ההוספה: לתמונה יש כותרת וקישור
 const ADD_FIELDS = [
   { name: "title", placeholder: "Photo title" },
   { name: "url", placeholder: "Image URL" },
 ];
 
 function Photos() {
+
   const { user } = useContext(UserContext);
   const { username, albumId } = useParams();
 
-  // בדיקה: האם האלבום הזה שייך למשתמש המחובר?
-  const { items: myAlbum, loading: albumLoading } = useResource(
-    "albums",
-    `?id=${albumId}&userId=${user?.id}`
-  );
+  const { items: albums, loading: albumsLoading } = useResource("albums", `?userId=${user.id}`);
+  const album = albums.find((item) => item.id === Number(albumId));
 
-  const {
-    items: photos,
-    loading,
-    error,
-    addItem,
-    updateItem,
-    removeItem,
-    loadMore,
-    loadingMore,                                          // ← חדש (באג 6)
-    hasMore,
-  } = useResource("photos", `?albumId=${albumId}`, PAGE_SIZE);
+  const { items: photos, loading, error, addItem, updateItem, removeItem, loadMore, hasMore } =
+    useResource("photos", `?albumId=${albumId}`, PAGE_SIZE);
 
-  // משלימים תמונה חדשה: לאיזה אלבום היא שייכת
   function handleAdd(values) {
     addItem({
       albumId: Number(albumId),
@@ -47,14 +33,13 @@ function Photos() {
     });
   }
 
-  if (loading || albumLoading) return <p>Loading...</p>;
+  if (albumsLoading || loading) return <p>Loading...</p>;
 
-  // האלבום לא שייך למשתמש (או לא קיים)
-  if (myAlbum.length === 0) {
+  if (!album) {
     return (
       <div>
-        <p>Album not found.</p>
         <Link to={`/${username}/albums`}>← Back to albums</Link>
+        <p>Album not found.</p>
       </div>
     );
   }
@@ -63,7 +48,7 @@ function Photos() {
     <div>
       <Link to={`/${username}/albums`}>← Back to albums</Link>
 
-      <h2>{myAlbum[0].title}</h2>
+      <h2>{album.title}</h2>
 
       {error && <p>Error: {error}</p>}
 
@@ -73,21 +58,11 @@ function Photos() {
 
       <div className="photos-grid">
         {photos.map((photo) => (
-          <PhotoItem
-            key={photo.id}
-            photo={photo}
-            onUpdate={updateItem}
-            onDelete={removeItem}
-          />
+          <PhotoItem key={photo.id} photo={photo} onUpdate={updateItem} onDelete={removeItem} />
         ))}
       </div>
 
-      {/* בזמן טעינה: הכפתור מושבת ומציג "Loading..." */}   {/* ← שונה (באג 6) */}
-      {hasMore && (
-        <button onClick={loadMore} disabled={loadingMore}>
-          {loadingMore ? "Loading..." : "Load more"}
-        </button>
-      )}
+      {hasMore && <button onClick={loadMore}>Load more</button>}
     </div>
   );
 }

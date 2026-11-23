@@ -3,27 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/UserContext";
 import "../../../css/Info.css";
 
-// רשימת השדות להצגה: כותרת, ואיך מוציאים את הערך מהמשתמש
-const INFO_FIELDS = [
-  { label: "Full name", getValue: (user) => user.name },
-  { label: "Username", getValue: (user) => user.username },
-  { label: "Email", getValue: (user) => user.email },
-  { label: "Phone", getValue: (user) => user.phone },
-  { label: "Street", getValue: (user) => user.address?.street },
-  { label: "City", getValue: (user) => user.address?.city },
-  { label: "Company", getValue: (user) => user.company?.name },
-  { label: "Website", getValue: (user) => user.website },
-];
-
 function Info() {
+
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
-  if (!user) return null;
+  const rows = [
+    { label: "Full name", value: user.name },
+    { label: "Username", value: user.username },
+    { label: "Email", value: user.email },
+    { label: "Phone", value: user.phone },
+    { label: "Street", value: user.address.street },
+    { label: "City", value: user.address.city },
+    { label: "Company", value: user.company.name },
+    { label: "Website", value: user.website },
+  ];
 
-  // סגירה: חזרה לדף הבית (מ-/Bret/info ל-/Bret)
   function close() {
-    navigate("..");
+    navigate(`/${user.username}`);
   }
 
   return (
@@ -33,10 +30,10 @@ function Info() {
 
         <table>
           <tbody>
-            {INFO_FIELDS.map((field) => (
-              <tr key={field.label}>
-                <th>{field.label}</th>
-                <td>{field.getValue(user) || "-"}</td>
+            {rows.map((row) => (
+              <tr key={row.label}>
+                <th>{row.label}</th>
+                <td>{row.value || "-"}</td>
               </tr>
             ))}
           </tbody>

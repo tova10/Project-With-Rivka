@@ -3,31 +3,13 @@ import useFormFields from "../../../hooks/useFormFields";
 import Comments from "./Comments";
 import "../../../css/PostItem.css";
 
-// post       = הפוסט להצגה
-// isSelected = האם הפוסט פתוח
-// isOwner    = האם הפוסט שייך למשתמש המחובר
-// onSelect   = פתיחה / סגירה
-// onUpdate   = עדכון (מקבל id ושינויים)
-// onDelete   = מחיקה (מקבל id)
-function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
+// פוסט אחד ברשימה.
+// סגור: רק מזהה וכותרת. נבחר: מודגש, עם התוכן, כפתורים והתגובות.
+// isOwner = הפוסט של המשתמש המחובר (רק אז אפשר לערוך ולמחוק)
+function PostItem({ post, isSelected, isOwner, onSelect, onClose, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const { values, handleChange, reset } = useFormFields({
-    title: post.title,
-    body: post.body,
-  });
-
-  // לחיצה על כפתור הכותרת: פותחת את הפוסט (רק אם הוא סגור)
-  function handleOpen() {
-    if (!isSelected) {
-      onSelect(post.id);
-    }
-  }
-
-  // לחיצה על X: סוגרת את הפוסט
-  function handleClose() {
-    onSelect(post.id);
-  }
+  const { values, handleChange, reset } = useFormFields({ title: post.title, body: post.body });
 
   function handleSave() {
     if (!values.title.trim() || !values.body.trim()) return;
@@ -35,28 +17,27 @@ function PostItem({ post, isSelected, isOwner, onSelect, onUpdate, onDelete }) {
     setIsEditing(false);
   }
 
-  // מחיקת פוסט מוחקת בשרת גם את כל התגובות שלו
-  function handleDelete() {
-    if (window.confirm(`Delete post "${post.title}" and all its comments?`)) {
-      onDelete(post.id);
-    }
-  }
-
   function handleCancel() {
     reset();
     setIsEditing(false);
   }
 
+  // מחיקת פוסט מוחקת בשרת גם את התגובות שלו
+  function handleDelete() {
+    if (window.confirm(`Delete post "${post.title}" and its comments?`)) {
+      onDelete(post.id);
+    }
+  }
+
   return (
     <li className={isSelected ? "post-item selected" : "post-item"}>
       <div className="post-header">
-        {/* כפתור לבחירת הפוסט (לפי הדרישות) */}
-        <button className="post-title-button" onClick={handleOpen}>
+        <button className="post-title-button" onClick={onSelect}>
           #{post.id} {post.title}
         </button>
 
         {isSelected && (
-          <button className="close-button" onClick={handleClose}>
+          <button className="close-button" aria-label="Close" onClick={onClose}>
             ✕
           </button>
         )}

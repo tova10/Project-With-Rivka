@@ -1,65 +1,44 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { UserContext } from "../../../context/UserContext";
 import useResource from "../../../hooks/useResource";
-import { useUrlState, useUrlSearch } from "../../../hooks/useUrlState";
-import { filterItems } from "../../../utils/listUtils";
+import useUrlParams from "../../../hooks/useUrlParams";
+import { filterItems, sortItems } from "../../../utils/listUtils";
 import AddForm from "../../common/AddForm";
 import SearchBar from "../../common/SearchBar";
+import SortSelect from "../../common/SortSelect";
 import PostItem from "./PostItem";
 import "../../../css/Posts.css";
 
-// השדות בטופס ההוספה: לפוסט יש כותרת ותוכן
+// לפי מה אפשר לחפש ולמיין
+const FIELDS = [
+  { value: "id", label: "ID" },
+  { value: "title", label: "Title" },
+];
+
 const ADD_FIELDS = [
   { name: "title", placeholder: "Title" },
   { name: "body", placeholder: "Content" },
 ];
 
-// על מה אפשר לחפש (לפי הדרישות: id וכותרת)
-const SEARCH_FIELDS = [
-  { value: "id", label: "ID" },
-  { value: "title", label: "Title" },
-];
-
+// הפוסטים: /Bret/posts (שלי) או /Bret/posts?all=true (של כולם)
 function Posts() {
   const { user } = useContext(UserContext);
 
-  // הפוסטים שלי / כל הפוסטים (נשמר בכתובת: ?all=true)
-  const [all, setAll] = useUrlState("all");
-  const showAll = all === "true";
-
-  // הסינון שנשלח לשרת: לפי המצב
-  const query = showAll ? "" : `?userId=${user?.id}`;
+  // נשמר בכתובת: חיפוש, מיון, הכול/שלי, והפוסט הפתוח (?post=5)
+  const [params, setParams] = useUrlParams({ by: "title", q: "", sort: "id", all: "", post: "" });
+  const showAll = params.all === "true";
 
   const { items: posts, loading, error, addItem, updateItem, removeItem } =
-    useResource("posts", query);
+    useResource("posts", showAll ? "" : `?userId=${user.id}`);
 
-  // החיפוש נשמר בכתובת (נשאר אחרי ריענון)
-   const [search, setSearch] = useUrlSearch(
-    "title",
-    SEARCH_FIELDS.map((field) => field.value)
+  // הרשימה המוצגת: קודם חיפוש, אחר כך מיון (useMemo - רק כשמשהו משתנה)
+  const visiblePosts = useMemo(
+    () => sortItems(filterItems(posts, params.by, params.q), params.sort),
+    [posts, params.by, params.q, params.sort]
   );
-  // איזה פוסט פתוח ("" = אף אחד), נשמר בכתובת: ?post=5
-  const [selected, setSelected] = useUrlState("post");
 
-  // מה מוצג: הרשימה אחרי חיפוש
-  const visiblePosts = filterItems(posts, search);
-
-  // משלימים פוסט חדש: userId של המחובר
   function handleAdd(values) {
     addItem({ userId: user.id, title: values.title, body: values.body });
-  }
-
-  // לחיצה על פוסט פתוח סוגרת אותו, ועל פוסט אחר פותחת אותו
-  function handleSelect(postId) {
-    setSelected(String(postId) === selected ? "" : String(postId));
-  }
-
-  // מחיקה: אם הפוסט שנמחק היה פתוח, מנקים את הבחירה
-  function handleDelete(postId) {
-    removeItem(postId);
-    if (String(postId) === selected) {
-      setSelected("");
-    }
   }
 
   if (loading) return <p>Loading...</p>;
@@ -68,7 +47,7 @@ function Posts() {
     <div>
       <h2>{showAll ? "All Posts" : "My Posts"}</h2>
 
-      <button onClick={() => setAll(showAll ? "" : "true")}>
+      <button onClick={() => setParams({ all: showAll ? "" : "true" })}>
         {showAll ? "Show my posts" : "Show all posts"}
       </button>
 
@@ -76,20 +55,33 @@ function Posts() {
 
       <AddForm fields={ADD_FIELDS} onAdd={handleAdd} />
 
-      <SearchBar fields={SEARCH_FIELDS} search={search} onChange={setSearch} />
+      <SearchBar
+        fields={FIELDS}
+        field={params.by}
+        text={params.q}
+        onChange={(by, q) => setParams({ by, q })}
+      />
+      <SortSelect
+        options={FIELDS}
+        value={params.sort}
+        onChange={(sort) => setParams({ sort })}
+      />
 
-      <p>Showing {visiblePosts.length} of {posts.length}</p>
+      <p className="list-count">
+        Showing {visiblePosts.length} of {posts.length}
+      </p>
 
       <ul>
         {visiblePosts.map((post) => (
           <PostItem
             key={post.id}
             post={post}
-            isSelected={String(post.id) === selected}
+            isSelected={String(post.id) === params.post}
             isOwner={post.userId === user.id}
-            onSelect={handleSelect}
+            onSelect={() => setParams({ post: String(post.id) })}
+            onClose={() => setParams({ post: "" })}
             onUpdate={updateItem}
-            onDelete={handleDelete}
+            onDelete={removeItem}
           />
         ))}
       </ul>

@@ -1,31 +1,4 @@
-/* Todos.css: סרגל כלים בשורה אחת + לוח קנבן (פתוחות / בוצעו) */
-main > div:has(> .todo-progress) {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 16px;
-}
-main > div:has(> .todo-progress) > * { flex: 1 1 100%; min-width: 0; }
-main > div:has(> .todo-progress) > .search-bar,
-main > div:has(> .todo-progress) > .search-bar + div,
-main > div:has(> .todo-progress) > .search-bar + div + p { flex: 0 0 auto; margin-top: 12px; margin-bottom: 12px; }
-
-/* המיון */
-.search-bar + div:has(> select) {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 12px 0;
-  padding: 5px 6px 5px 16px;
-  background: var(--card);
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  box-shadow: var(--shadow);
-}
-.search-bar + div:has(> select) select { padding: 6px 32px 6px 10px; background-color: transparent; border: none; }
-.search-bar + div:has(> select) select:focus { box-shadow: none; transform: none; }
-
-/* הקנבן: כל משימה שסומנה עוברת לעמודה השנייה */
+/* Todos.css: לוח קנבן (פתוחות / בוצעו) */
 ul:has(> .todo-item) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -46,9 +19,6 @@ ul:has(> .todo-item)::after {
 ul:has(> .todo-item)::before { content: "To do"; grid-column: 1; }
 ul:has(> .todo-item)::after { content: "Done · " counter(done); grid-column: 2; }
 
-@media (max-width: 1150px) {
-  main > div:has(> .todo-progress) { grid-template-columns: 1fr; }
-}
 @media (max-width: 700px) {
   ul:has(> .todo-item) { gap: 10px 12px; }
   ul:has(> .todo-item)::before,

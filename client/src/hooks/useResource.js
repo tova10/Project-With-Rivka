@@ -1,112 +1,81 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getData, addData, updateData, deleteData } from "../api/api";
-import { getCache, setCache, clearResource } from "../utils/cache";
+import { CacheContext } from "../context/CacheContext";
 
-const EMPTY = { items: [], offset: 0, hasMore: false };
+const NO_ITEMS = [];
 
+// כתובת הבקשה. עם pageSize - מביאים רק חלק: _start = מאיפה, _limit = כמה
+// (בעימוד תמיד יש query, למשל "?albumId=5", ולכן מוסיפים עם &)
 function buildPath(resource, query, pageSize, start) {
-  let path = `${resource}${query}`;
-
-  if (pageSize > 0) {
-    const separator = query ? "&" : "?";
-    path += `${separator}_start=${start}&_limit=${pageSize}`;
-  }
-
-  return path;
+  if (!pageSize) return resource + query;
+  return `${resource}${query}&_start=${start}&_limit=${pageSize}`;
 }
 
+// Hook לעבודה עם רשימה מהשרת: הבאה (דרך ה-Cache), הוספה, עדכון ומחיקה
+// resource = "todos" / "posts" / "albums" ...
+// query    = סינון בשרת, למשל "?userId=1"
+// pageSize = כמה פריטים להביא בכל פעם (0 = הכול בבת אחת)
 function useResource(resource, query = "", pageSize = 0) {
-  const cacheKey = `${resource}${query}|${pageSize}`;
-
-  const [data, setData] = useState(() => getCache(cacheKey) || EMPTY);
-  const [loading, setLoading] = useState(() => !getCache(cacheKey));
+  const { cache, setCache } = useContext(CacheContext);
   const [error, setError] = useState("");
-  const [prevKey, setPrevKey] = useState(cacheKey);
-  const [loadingMore, setLoadingMore] = useState(false);
 
-  const dataRef = useRef(data);
+  const key = resource + query; // המפתח של הרשימה ב-Cache
+  const list = cache[key]; // { items, offset, hasMore }, או undefined אם עוד לא הובאה
+  const isLoaded = list !== undefined;
 
-  if (prevKey !== cacheKey) {
-    const cached = getCache(cacheKey);
-    setPrevKey(cacheKey);
-    setData(cached || EMPTY);
-    setLoading(!cached);
-    setError("");
+  // שומרים רשימה ב-Cache
+  function saveList(newList) {
+    setCache((prev) => ({ ...prev, [key]: newList }));
   }
 
-  function apply(changes) {
-    const next = { ...dataRef.current, ...changes };
-    dataRef.current = next;
-    setData(next);
-    setCache(cacheKey, next);
-  }
-
+  // הבאה מהשרת - רק אם הרשימה עוד לא נמצאת ב-Cache
   useEffect(() => {
-    let ignore = false;
+    if (isLoaded) return;
 
-    const cached = getCache(cacheKey);
-    dataRef.current = cached || EMPTY;
-    if (cached) return;
+    getData(buildPath(resource, query, pageSize, 0))
+      .then((items) =>
+        setCache((prev) => ({
+          ...prev,
+          [key]: { items, offset: items.length, hasMore: pageSize > 0 && items.length === pageSize },
+        }))
+      )
+      .catch((err) => setError(err.message));
+  }, [key, isLoaded, resource, query, pageSize, setCache]);
 
-    async function load() {
-      try {
-        const items = await getData(buildPath(resource, query, pageSize, 0));
-        if (ignore) return;
-        const next = {
-          items,
-          offset: items.length,
-          hasMore: pageSize > 0 && items.length === pageSize,
-        };
-        dataRef.current = next;
-        setData(next);
-        setCache(cacheKey, next);
-      } catch (err) {
-        if (!ignore) setError(err.message);
-      } finally {
-        if (!ignore) setLoading(false);
+  // שינוי ברשימה (הוספה / עדכון / מחיקה).
+  // רשימות אחרות של אותו resource נמחקות מה-Cache, כי הן כבר לא מעודכנות
+  // (למשל "הפוסטים שלי" ו"כל הפוסטים"). בפעם הבאה שיצטרכו אותן - הן יובאו מחדש
+  function changeList(change) {
+    setCache((prev) => {
+      const next = {};
+      for (const otherKey in prev) {
+        if (otherKey.split("?")[0] !== resource) next[otherKey] = prev[otherKey];
       }
-    }
+      next[key] = change(prev[key]);
+      return next;
+    });
+  }
 
-    load();
-
-    return () => {
-      ignore = true;
-    };
-  }, [cacheKey, resource, query, pageSize]);
-
+  // הבאת החלק הבא (לתמונות)
   async function loadMore() {
-    if (loadingMore) return;
-    setLoadingMore(true);
-
     try {
-      const newItems = await getData(
-        buildPath(resource, query, pageSize, dataRef.current.offset)
-      );
-      const current = dataRef.current;
-      const fresh = newItems.filter(
-        (newItem) => !current.items.some((item) => item.id === newItem.id)
-      );
-      apply({
-        items: [...current.items, ...fresh],
-        offset: current.offset + newItems.length,
-        hasMore: newItems.length === pageSize,
+      const more = await getData(buildPath(resource, query, pageSize, list.offset));
+      // פריט שהוספנו בעצמנו כבר מופיע ברשימה - לא מוסיפים אותו שוב
+      const newItems = more.filter((item) => !list.items.some((old) => old.id === item.id));
+      saveList({
+        items: [...list.items, ...newItems],
+        offset: list.offset + more.length,
+        hasMore: more.length === pageSize,
       });
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoadingMore(false);
     }
-  }
-
-  function invalidateOthers() {
-    clearResource(resource, cacheKey);
   }
 
   async function addItem(newItem) {
     try {
       const saved = await addData(resource, newItem);
-      apply({ items: [...dataRef.current.items, saved] });
-      invalidateOthers();
+      changeList((old) => ({ ...old, items: [...old.items, saved] }));
     } catch (err) {
       setError(err.message);
     }
@@ -115,10 +84,10 @@ function useResource(resource, query = "", pageSize = 0) {
   async function updateItem(id, changes) {
     try {
       const updated = await updateData(resource, id, changes);
-      apply({
-        items: dataRef.current.items.map((item) => (item.id === id ? updated : item)),
-      });
-      invalidateOthers();
+      changeList((old) => ({
+        ...old,
+        items: old.items.map((item) => (item.id === id ? updated : item)),
+      }));
     } catch (err) {
       setError(err.message);
     }
@@ -127,27 +96,25 @@ function useResource(resource, query = "", pageSize = 0) {
   async function removeItem(id) {
     try {
       await deleteData(resource, id);
-      const { items, offset } = dataRef.current;
-      apply({
-        items: items.filter((item) => item.id !== id),
-        offset: pageSize > 0 ? Math.max(offset - 1, 0) : offset,
-      });
-      invalidateOthers();
+      changeList((old) => ({
+        ...old,
+        items: old.items.filter((item) => item.id !== id),
+        offset: old.offset - 1,
+      }));
     } catch (err) {
       setError(err.message);
     }
   }
 
   return {
-    items: data.items,
-    loading,
+    items: isLoaded ? list.items : NO_ITEMS,
+    loading: !isLoaded && !error,
     error,
+    hasMore: isLoaded && list.hasMore,
     addItem,
     updateItem,
     removeItem,
     loadMore,
-    loadingMore,
-    hasMore: data.hasMore,
   };
 }
 

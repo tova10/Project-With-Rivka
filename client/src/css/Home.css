@@ -1,9 +1,8 @@
 /* Home.css: מסגרת המסך – סרגל צד + אזור תוכן, צבע ושם ענק לכל מדור */
-body:has(nav a.active:nth-of-type(1)) { --accent: #ff5b2e; --on-accent: #121212; }
-body:has(nav a.active:nth-of-type(2)) { --accent: #36b5ff; --on-accent: #121212; }
-body:has(nav a.active:nth-of-type(3)) { --accent: #c4f03a; --on-accent: #121212; }
-body:has(nav a.active:nth-of-type(4)) { --accent: #ff5fa2; --on-accent: #121212; }
-body:has(nav a.active:nth-of-type(5)) { --accent: #8b6cff; --on-accent: #ffffff; }
+body:has(nav a.active:nth-of-type(1)) { --accent: #36b5ff; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(2)) { --accent: #c4f03a; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(3)) { --accent: #ff5fa2; --on-accent: #121212; }
+body:has(nav a.active:nth-of-type(4)) { --accent: #8b6cff; --on-accent: #ffffff; }
 
 #root > div:has(> header + main) {
   display: grid;
@@ -42,7 +41,6 @@ nav {
   flex-direction: column;
   gap: 4px;
   flex: 1;
-  font-size: 0; /* מסתיר את מפרידי ה-| */
   counter-reset: link;
 }
 
@@ -116,11 +114,10 @@ main::after {
   -webkit-text-stroke: 1.5px var(--soft);
   pointer-events: none;
 }
-body:has(nav a.active:nth-of-type(1)) main::after { content: "OVERVIEW"; }
-body:has(nav a.active:nth-of-type(2)) main::after { content: "PROFILE"; }
-body:has(nav a.active:nth-of-type(3)) main::after { content: "TODOS"; }
-body:has(nav a.active:nth-of-type(4)) main::after { content: "POSTS"; }
-body:has(nav a.active:nth-of-type(5)) main::after { content: "ALBUMS"; }
+body:has(nav a.active:nth-of-type(1)) main::after { content: "PROFILE"; }
+body:has(nav a.active:nth-of-type(2)) main::after { content: "TODOS"; }
+body:has(nav a.active:nth-of-type(3)) main::after { content: "POSTS"; }
+body:has(nav a.active:nth-of-type(4)) main::after { content: "ALBUMS"; }
 
 /* מעבר עמוד: התוכן "נחשף" מימין */
 main > div:not(.modal-overlay):not(:has(.post-item)) {
@@ -149,36 +146,6 @@ main > div:has(.post-item) { animation: fade-in 0.4s backwards; }
   font-size: clamp(40px, 5.5vw, 80px);
   line-height: 0.95;
 }
-.home-intro-text {
-  max-width: 44ch;
-  margin: 0 0 34px;
-  font-size: 18px;
-  line-height: 1.5;
-  color: var(--muted);
-}
-.home-intro-links {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-.home-link {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px 20px;
-  color: var(--ink);
-  text-decoration: none;
-  background: var(--card);
-  border: 1.5px solid var(--ink);
-  border-radius: 20px;
-  box-shadow: var(--shadow);
-  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.25s;
-}
-.home-link:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-lg); }
-.home-link-num { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
-.home-link-title { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
-.home-link-text { font-size: 14px; color: var(--muted); }
-
 @media (max-width: 900px) {
   #root > div:has(> header + main) { grid-template-columns: 1fr; }
   header {
@@ -196,6 +163,5 @@ main > div:has(.post-item) { animation: fade-in 0.4s backwards; }
   nav button { align-self: center; margin: 0 0 0 auto; }
   main { min-height: auto; padding: 26px 16px 50px; }
   .home-intro { min-height: auto; }
-  .home-intro-links { grid-template-columns: 1fr; }
   main::after { display: none; }
 }

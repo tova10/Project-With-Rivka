@@ -1,16 +1,10 @@
 import { useState } from "react";
 import useFormFields from "../../../hooks/useFormFields";
 
-// comment  = התגובה להצגה
-// isOwner  = האם התגובה של המשתמש המחובר
-// onUpdate = עדכון (מקבל id ושינויים)
-// onDelete = מחיקה (מקבל id)
+// תגובה אחת. isOwner = התגובה של המשתמש המחובר (רק אז אפשר לערוך ולמחוק)
 function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
-  const { values, handleChange, reset } = useFormFields({
-    name: comment.name,
-    body: comment.body,
-  });
+  const { values, handleChange, reset } = useFormFields({ name: comment.name, body: comment.body });
 
   function handleSave() {
     if (!values.name.trim() || !values.body.trim()) return;
@@ -18,15 +12,15 @@ function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
     setIsEditing(false);
   }
 
+  function handleCancel() {
+    reset();
+    setIsEditing(false);
+  }
+
   function handleDelete() {
     if (window.confirm("Delete this comment?")) {
       onDelete(comment.id);
     }
-  }
-
-  function handleCancel() {
-    reset();
-    setIsEditing(false);
   }
 
   return (
@@ -41,8 +35,7 @@ function CommentItem({ comment, isOwner, onUpdate, onDelete }) {
       ) : (
         <>
           <strong>{comment.name}</strong>
-          {/* מי כתב: שם משתמש בלבד (לא מייל). תגובה בלי שם משתמש = אנונימית */}
-          <small> by {comment.username || "Anonymous"}</small>
+          <small>by {comment.email}</small>
           <p>{comment.body}</p>
           {isOwner && (
             <>

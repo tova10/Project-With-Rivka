@@ -1,16 +1,16 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import CacheProvider from "./context/CacheContext";
 import UserProvider from "./context/UserContext";
+import App from "./App";
 import "./css/index.css";
-import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <CacheProvider>
       <UserProvider>
         <App />
       </UserProvider>
-    </BrowserRouter>
-  </StrictMode>
+    </CacheProvider>
+  </BrowserRouter>
 );

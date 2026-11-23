@@ -1,0 +1,15 @@
+/* SortSelect.css: בחירת המיון, בצורת גלולה ליד החיפוש */
+.sort-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 5px 6px 5px 16px;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+.sort-select label { margin: 0; }
+.sort-select select { padding: 6px 32px 6px 10px; background-color: transparent; border: none; }
+.sort-select select:focus { box-shadow: none; transform: none; }

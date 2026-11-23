@@ -132,3 +132,15 @@
 @media (hover: none) {
   .album-item > button { opacity: 1; }
 }
+
+/* כפתור Edit: מתחת לכפתור Delete */
+.album-item > .edit-button {
+  --b-fg: var(--ink);
+  --b-hover: var(--accent);
+  --b-hover-fg: var(--on-accent);
+  top: 52px;
+}
+
+/* טופס שינוי השם */
+.album-item > form { position: relative; z-index: 2; margin: auto 0 0; }
+.album-item > form input { flex: 1 1 100%; min-width: 0; }

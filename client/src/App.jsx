@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import Login from "./components/pages/Login/Login";
 import Register from "./components/pages/Register/Register";
 import RegisterDetails from "./components/pages/RegisterDetails/RegisterDetails";
@@ -10,14 +10,11 @@ import Posts from "./components/pages/Posts/Posts";
 import Albums from "./components/pages/Albums/Albums";
 import Photos from "./components/pages/Photos/Photos";
 import NotFound from "./components/pages/NotFound/NotFound";
-import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      {/* דף הכניסה בודק בעצמו אם כבר יש משתמש מחובר, ואם כן מעביר לעמוד היישום */}
       <Route path="/" element={<Navigate to="/login" replace />} />
-
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/register/details" element={<RegisterDetails />} />

@@ -1,12 +1,14 @@
-/// <reference types="vite/client" />
-// כתובת השרת: נלקחת ממשתנה הסביבה VITE_API_URL (בקובץ .env), ואם אין - ברירת מחדל
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = "http://localhost:3000";
 
-async function request(path, options = {}) {
-  const response = await fetch(`${BASE_URL}/${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+async function request(path, method = "GET", body) {
+  const options = { method };
+
+  if (body) {
+    options.headers = { "Content-Type": "application/json" };
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(`${BASE_URL}/${path}`, options);
 
   if (!response.ok) {
     throw new Error(`Server error: ${response.status}`);
@@ -20,21 +22,13 @@ export function getData(path) {
 }
 
 export function addData(path, item) {
-  return request(path, {
-    method: "POST",
-    body: JSON.stringify(item),
-  });
+  return request(path, "POST", item);
 }
 
 export function updateData(path, id, changes) {
-  return request(`${path}/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(changes),
-  });
+  return request(`${path}/${id}`, "PATCH", changes);
 }
 
 export function deleteData(path, id) {
-  return request(`${path}/${id}`, {
-    method: "DELETE",
-  });
+  return request(`${path}/${id}`, "DELETE");
 }

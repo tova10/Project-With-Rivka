@@ -6,13 +6,12 @@ import useFormFields from "../../../hooks/useFormFields";
 import "../../../css/Login.css";
 
 function Login() {
+
   const { values, handleChange } = useFormFields({ username: "", password: "" });
   const [error, setError] = useState("");
   const { user, login } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // כבר יש משתמש שמור (ב-LS): עוברים ישר לעמוד היישום שלו
-  // (הבדיקה נמצאת אחרי כל ה-hooks, כי אסור להפעיל hooks אחרי return)
   if (user) {
     return <Navigate to={`/${user.username}`} replace />;
   }
@@ -21,16 +20,8 @@ function Login() {
     e.preventDefault();
     setError("");
 
-    if (!values.username || !values.password) {
-      setError("Please fill in all fields");
-      return;
-    }
-
     try {
-      const params = new URLSearchParams({
-        username: values.username,
-        password: values.password,
-      });
+      const params = new URLSearchParams(values);
       const users = await getData(`users?${params}`);
 
       if (users.length === 0) {
@@ -38,10 +29,10 @@ function Login() {
         return;
       }
 
-      const userWithoutPassword = { ...users[0] };
-      delete userWithoutPassword.password;
-      login(userWithoutPassword);
-      navigate(`/${userWithoutPassword.username}`);
+      const loggedUser = users[0];
+      delete loggedUser.password;
+      login(loggedUser);
+      navigate(`/${loggedUser.username}`);
     } catch (err) {
       setError(err.message);
     }
@@ -58,6 +49,7 @@ function Login() {
           aria-label="Username"
           value={values.username}
           onChange={handleChange}
+          required
         />
         <input
           name="password"
@@ -66,6 +58,7 @@ function Login() {
           aria-label="Password"
           value={values.password}
           onChange={handleChange}
+          required
         />
         <button type="submit">Login</button>
       </form>
