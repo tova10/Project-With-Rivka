@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "../../../css/TodoItem.css";
 
-// משימה אחת: מזהה, checkbox של ביצוע, כותרת, עריכה ומחיקה
 function TodoItem({ todo, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);

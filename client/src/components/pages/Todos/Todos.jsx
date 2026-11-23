@@ -9,7 +9,6 @@ import SortSelect from "../../common/SortSelect";
 import TodoItem from "./TodoItem";
 import "../../../css/Todos.css";
 
-// לפי מה אפשר לחפש ולמיין
 const FIELDS = [
   { value: "id", label: "ID" },
   { value: "title", label: "Title" },
@@ -18,17 +17,13 @@ const FIELDS = [
 
 const ADD_FIELDS = [{ name: "title", placeholder: "New todo..." }];
 
-// המשימות של המשתמש: /Bret/todos
 function Todos() {
   const { user } = useContext(UserContext);
   const { items: todos, loading, error, addItem, updateItem, removeItem } =
     useResource("todos", `?userId=${user.id}`);
 
-  // החיפוש והמיון נשמרים בכתובת: ?by=title&q=abc&sort=title
   const [params, setParams] = useUrlParams({ by: "title", q: "", sort: "id" });
 
-  // הרשימה המוצגת: קודם חיפוש, אחר כך מיון.
-  // useMemo - מחושבת מחדש רק כשמשהו מהם משתנה
   const visibleTodos = useMemo(
     () => sortItems(filterItems(todos, params.by, params.q), params.sort),
     [todos, params.by, params.q, params.sort]
